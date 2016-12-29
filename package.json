@@ -1,0 +1,12 @@
+{
+  "name": "pinballdb",
+  "version": "1.0.0",
+  "description": "in memory geo cache with an additional sort parameter",
+  "main": "index.js",
+  "repository": "https://github.com/victusfate/pinballdb",
+  "author": "victusfate",
+  "license": "MIT",
+  "dependencies": {
+    "geolib": "^2.0.22"
+  }
+}
