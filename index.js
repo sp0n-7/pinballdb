@@ -1,3 +1,3 @@
 module.exports = {
-  PinballDB : require('./lib/pinball').Pinball
+  Pinball : require('./lib/pinball')
 }
