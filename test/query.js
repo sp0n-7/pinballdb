@@ -175,7 +175,7 @@ const t1 = Date.now();
 console.log('load time',t1-t0);
 
 
-const NQueries = 1;
+const NQueries = 10000;
 const N = 20;
 
 
@@ -191,7 +191,7 @@ for (let i=0;i < NQueries;i++) {
   const upperLatitude   = searchLat + halfWinLat;
   const upperLongitude  = searchLon + halfWinLon;
 
-  console.log('search args', lowerLatitude,lowerLongitude,upperLatitude,upperLongitude,N)
+  // console.log('search args', lowerLatitude,lowerLongitude,upperLatitude,upperLongitude,N)
 
   const fQuery = () => {
     const sAction = 'fQuery';
@@ -211,7 +211,7 @@ for (let i=0;i < NQueries;i++) {
 Promise.all(aPromises).then( (aResults) => {
   let t2 = Date.now();
   console.log({ queriesTimeMS: t2-t1, queriesPerSecond: NQueries / ( (t2-t1)/1000 ) })
-  console.log('aResults',aResults);
+  // console.log('aResults',aResults);
   process.exit(0);
 })
 .catch( (err) => {
