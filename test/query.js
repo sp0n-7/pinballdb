@@ -144,7 +144,7 @@ const oIncidentBase = {
 }
 
 
-const NItems = 100000;
+const NItems = 1000;
 
 
 const t0 = Date.now();
@@ -195,15 +195,13 @@ for (let i=0;i < NQueries;i++) {
 
   const fQuery = () => {
     const sAction = 'fQuery';
-    return new Promise( (resolve,reject) => {
-      resolve(pb.query({
-        lowerLatitude   : lowerLatitude,
-        lowerLongitude  : lowerLongitude,
-        upperLatitude   : upperLatitude,
-        upperLongitude  : upperLongitude,
-        N               : N
-      }))
-    })
+    return Promise.resolve(pb.query({
+      lowerLatitude   : lowerLatitude,
+      lowerLongitude  : lowerLongitude,
+      upperLatitude   : upperLatitude,
+      upperLongitude  : upperLongitude,
+      N               : N
+    }));
   }
 
   aPromises.push(fQuery());
