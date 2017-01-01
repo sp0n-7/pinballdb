@@ -175,7 +175,7 @@ const t1 = Date.now();
 console.log('load time',t1-t0);
 
 
-const NQueries = 10000;
+const NQueries = 1;
 const N = 20;
 
 
@@ -195,7 +195,8 @@ for (let i=0;i < NQueries;i++) {
 
   const fQuery = () => {
     const sAction = 'fQuery';
-    return Promise.resolve(pb.query({
+    // return Promise.resolve(pb.query({
+    return Promise.resolve(pb.queryBruteForce({
       lowerLatitude   : lowerLatitude,
       lowerLongitude  : lowerLongitude,
       upperLatitude   : upperLatitude,
@@ -211,6 +212,10 @@ for (let i=0;i < NQueries;i++) {
 Promise.all(aPromises).then( (aResults) => {
   let t2 = Date.now();
   console.log({ queriesTimeMS: t2-t1, queriesPerSecond: NQueries / ( (t2-t1)/1000 ) })
+  for (let j=0;j < aResults.length;j++) {
+    console.log('blah',aResults[j]);
+    break;
+  }
   // console.log('aResults',aResults);
   process.exit(0);
 })

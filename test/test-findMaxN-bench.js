@@ -1,4 +1,4 @@
-const findMaxN = require('../lib/util').findMaxN;
+const findMaxNByScore = require('../lib/util').findMaxNByScore;
 
 const aArraySet = [
 ];
@@ -44,7 +44,7 @@ for (let i =0; i < 1;i++) {
     }
   }
   const t3 = Date.now();
-  let aResults = findMaxN({ aArraySet: aRandomSubset, N: 20 });
+  let aResults = findMaxNByScore({ aArraySet: aRandomSubset, N: 20 });
   const t4 = Date.now();
   // console.log(Date.now()-t2);
   console.log('random sampled time',t3-t2,'time',Date.now()-t3);

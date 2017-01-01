@@ -15,4 +15,5 @@ const options0 = {
 }
 
 let index = binarySearch(options0);
-console.log(index,anArray.splice(index,0, oItem));
+anArray.splice(index,0, oItem)
+console.log(index,anArray);
