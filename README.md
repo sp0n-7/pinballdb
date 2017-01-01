@@ -9,7 +9,7 @@ in memory cache for documents querying by lat, lon boundaries, and time sorted
 
 
 brute force backwards time search, 100k docs, 100k queries made
-
+```
   messel@messels-MBP:~/Desktop/Dropbox/code/js/db_tuts/pinball_tut/test$ node query.js 
   load time 6735
   { queriesTimeMS: 4441, queriesPerSecond: 22517.45102454402 }
@@ -33,6 +33,6 @@ brute force backwards time search, 100k docs, 100k queries made
   -k99910 1483286864571
   -k99900 1483286864561
   -k99896 1483286864557
-  
+```
   
   
