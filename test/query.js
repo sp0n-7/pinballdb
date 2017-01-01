@@ -144,7 +144,7 @@ const oIncidentBase = {
 }
 
 
-const NItems = 1000;
+const NItems = 100000;
 
 
 const t0 = Date.now();
@@ -154,13 +154,12 @@ const t0 = Date.now();
 for (let i=0;i < NItems;i++) {
   const id = '-k' + i;
   const ll = [lowerLeft[1] + Math.random() * deltaLat,lowerLeft[0] + Math.random() * deltaLon];
-  const tNow = Date.now();
   const oItemBase = Object.assign({}, oIncidentBase);
   const oItem = Object.assign(oItemBase, {
     id          : id,
-    cs          : tNow - 10 * 60 * 1000,
-    ts          : tNow,
-    score       : tNow,
+    cs          : t0 - 10 * 60 * 1000 + i,
+    ts          : t0 + i,
+    score       : t0 + i,
     latitude    : ll[0],
     longitude   : ll[1],
     ll          : ll,
@@ -175,7 +174,7 @@ const t1 = Date.now();
 console.log('load time',t1-t0);
 
 
-const NQueries = 1;
+const NQueries = 100000;
 const N = 20;
 
 
@@ -212,11 +211,10 @@ for (let i=0;i < NQueries;i++) {
 Promise.all(aPromises).then( (aResults) => {
   let t2 = Date.now();
   console.log({ queriesTimeMS: t2-t1, queriesPerSecond: NQueries / ( (t2-t1)/1000 ) })
-  for (let j=0;j < aResults.length;j++) {
-    console.log('blah',aResults[j]);
-    break;
+  const ind = aResults.length-1;
+  for (let j=0;j < aResults[ind].length;j++) {
+    console.log(aResults[ind][j].id,aResults[ind][j].ts)
   }
-  // console.log('aResults',aResults);
   process.exit(0);
 })
 .catch( (err) => {
