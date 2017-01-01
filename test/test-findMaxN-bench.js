@@ -43,9 +43,11 @@ for (let i =0; i < 1;i++) {
       aRandomSubset.push(aArraySet[j]);
     }
   }
+  const t3 = Date.now();
   let aResults = findMaxN({ aArraySet: aRandomSubset, N: 20 });
+  const t4 = Date.now();
   // console.log(Date.now()-t2);
-  console.log('time',Date.now()-t1);
+  console.log('random sampled time',t3-t2,'time',Date.now()-t3);
   // console.log('aResults',aResults);
 }
 
