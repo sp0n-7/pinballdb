@@ -1,14 +1,17 @@
 const binarySearch = require('../lib/util').binarySearch;
 
-let anArray = [
-  { id: 'a', score: 0    },
-  { id: 'b', score: 3    },
-  { id: 'c', score: 5.4  },
-  { id: 'd', score: 5.4  },
-  { id: 'e', score: 13   } 
-];
+let anArray = [];
 
-let oItem = { id: 'f', score: 5.4 };
+let N = 100;
+for (let i = 0;i < N;i++) {
+  let score = i;
+  if (i % 2) {
+    score = i - 1;
+  }
+  anArray.push({ id: '-k'+i, score: score})
+}
+
+let oItem = { id: '-k'+N, score: 50 };
 const options0 = {
   aScores : anArray,
   score   : oItem.score
