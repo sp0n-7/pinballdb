@@ -182,15 +182,17 @@ let aPromises = [];
 for (let i=0;i < NQueries;i++) {
   const searchLon       = lowerLeft[0] + Math.random() * deltaLon;
   const searchLat       = lowerLeft[1] + Math.random() * deltaLat;
-  const halfWinLon      = Math.random() * 0.02;
-  const halfWinLat      = Math.random() * 0.02;
+  // const halfWinLon      = Math.random() * 0.02;
+  // const halfWinLat      = Math.random() * 0.02;
+  const halfWinLon      = 0.04;
+  const halfWinLat      = 0.04;
 
   const lowerLatitude   = searchLat - halfWinLat;
   const lowerLongitude  = searchLon - halfWinLon;
   const upperLatitude   = searchLat + halfWinLat;
   const upperLongitude  = searchLon + halfWinLon;
 
-  // console.log('search args', lowerLatitude,lowerLongitude,upperLatitude,upperLongitude,N)
+  console.log('search args', lowerLatitude,lowerLongitude,upperLatitude,upperLongitude,N)
 
   const fQuery = () => {
     const sAction = 'fQuery';
