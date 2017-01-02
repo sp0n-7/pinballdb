@@ -3,36 +3,31 @@
 kind of a 3D in memory document db. ~~so far it's slow~~, and needs work (bug for internal sorts).
 
 in memory cache for documents querying by lat, lon boundaries, and time sorted
-  * shoves stuff into a grid
-  * groups results and grabs the N highest 
+  * kv store & ordered array by score (timestamp)
+  * query seeks backward from end of array and finds all values in region
+  * medium/large overlapping region scans can find recent events fast (quicker)
+  * tiny boundaries within region with no matches scans through entire collection (slower)
+  * single process (have not setup node cluster yet, should be easy to do so for queries)
 
 
 
 brute force backwards time search, 100k docs, 100k queries made
 ```
-  messel@messels-MBP:~/Desktop/Dropbox/code/js/db_tuts/pinball_tut/test$ node query.js 
-  load time 6735
-  { queriesTimeMS: 4441, queriesPerSecond: 22517.45102454402 }
-  -k99990 1483286864651
-  -k99982 1483286864643
-  -k99980 1483286864641
-  -k99979 1483286864640
-  -k99972 1483286864633
-  -k99966 1483286864627
-  -k99964 1483286864625
-  -k99963 1483286864624
-  -k99959 1483286864620
-  -k99958 1483286864619
-  -k99957 1483286864618
-  -k99950 1483286864611
-  -k99949 1483286864610
-  -k99947 1483286864608
-  -k99940 1483286864601
-  -k99937 1483286864598
-  -k99923 1483286864584
-  -k99910 1483286864571
-  -k99900 1483286864561
-  -k99896 1483286864557
+
+0 size query windows lat lon space (worst case)
+
+
+query halfwindow range 0-0.02 lat lon space (small search windows)
+messel@messels-MBP:~/Desktop/Dropbox/code/js/db_tuts/pinball_tut/test$ node query.js 
+load time 1235
+{ queriesTimeMS: 11382, queriesPerSecond: 8785.802143735724 }
+
+queries, query halfwindow range 0-0.04 lat lon space (larger search windows)
+messel@messels-MBP:~/Desktop/Dropbox/code/js/db_tuts/pinball_tut/test$ node query.js 
+load time 1238
+{ queriesTimeMS: 3951, queriesPerSecond: 25310.048089091368 }
+
+
 ```
   
   

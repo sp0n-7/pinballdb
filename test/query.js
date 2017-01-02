@@ -144,8 +144,8 @@ const oIncidentBase = {
 }
 
 
-const NItems = 100000;
-
+const NItems    = 100;
+const NQueries  = 1;
 
 const t0 = Date.now();
 
@@ -174,7 +174,7 @@ const t1 = Date.now();
 console.log('load time',t1-t0);
 
 
-const NQueries = 100000;
+
 const N = 20;
 
 
@@ -182,8 +182,8 @@ let aPromises = [];
 for (let i=0;i < NQueries;i++) {
   const searchLon       = lowerLeft[0] + Math.random() * deltaLon;
   const searchLat       = lowerLeft[1] + Math.random() * deltaLat;
-  const halfWinLon      = Math.random() * 0.04;
-  const halfWinLat      = Math.random() * 0.04;
+  const halfWinLon      = Math.random() * 0.02;
+  const halfWinLat      = Math.random() * 0.02;
 
   const lowerLatitude   = searchLat - halfWinLat;
   const lowerLongitude  = searchLon - halfWinLon;
@@ -195,7 +195,7 @@ for (let i=0;i < NQueries;i++) {
   const fQuery = () => {
     const sAction = 'fQuery';
     // return Promise.resolve(pb.query({
-    return Promise.resolve(pb.queryBruteForce({
+    return Promise.resolve(pb.query({
       lowerLatitude   : lowerLatitude,
       lowerLongitude  : lowerLongitude,
       upperLatitude   : upperLatitude,
@@ -211,10 +211,13 @@ for (let i=0;i < NQueries;i++) {
 Promise.all(aPromises).then( (aResults) => {
   let t2 = Date.now();
   console.log({ queriesTimeMS: t2-t1, queriesPerSecond: NQueries / ( (t2-t1)/1000 ) })
-  const ind = aResults.length-1;
-  for (let j=0;j < aResults[ind].length;j++) {
-    console.log(aResults[ind][j].id,aResults[ind][j].ts)
-  }
+  // for (let ind=0;ind < aResults.length;ind++) {
+    let ind = aResults.length - 1;
+    console.log('iQuery',ind);
+    for (let j=0;j < aResults[ind].length;j++) {
+      console.log(aResults[ind][j].id,aResults[ind][j].ts,aResults[ind][j].latitude,aResults[ind][j].longitude)
+    }    
+  // }
   process.exit(0);
 })
 .catch( (err) => {
