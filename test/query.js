@@ -7,16 +7,11 @@ const deltaLon  = 2 * Math.abs(center[0] - lowerLeft[0]);
 const deltaLat  = 2 * Math.abs(center[1] - lowerLeft[1]);
 
 
-const NLat = 100;
-const NLon = 100;
-
 const pb = new Pinball({
   lowerLatitude  : lowerLeft[1],
   upperLatitude  : lowerLeft[1] + deltaLat,
   lowerLongitude : lowerLeft[0],
   upperLongitude : lowerLeft[0] + deltaLon,
-  deltaLatitude  : deltaLat / NLat,
-  deltaLongitude : deltaLon / NLon
 });
 
 
@@ -144,8 +139,8 @@ const oIncidentBase = {
 }
 
 
-const NItems    = 100;
-const NQueries  = 1;
+const NItems    = 100000;
+const NQueries  = 10000;
 
 const t0 = Date.now();
 
@@ -182,10 +177,8 @@ let aPromises = [];
 for (let i=0;i < NQueries;i++) {
   const searchLon       = lowerLeft[0] + Math.random() * deltaLon;
   const searchLat       = lowerLeft[1] + Math.random() * deltaLat;
-  // const halfWinLon      = Math.random() * 0.02;
-  // const halfWinLat      = Math.random() * 0.02;
-  const halfWinLon      = 0.04;
-  const halfWinLat      = 0.04;
+  const halfWinLon      = Math.random() * 0.02;
+  const halfWinLat      = Math.random() * 0.02;
 
   const lowerLatitude   = searchLat - halfWinLat;
   const lowerLongitude  = searchLon - halfWinLon;
