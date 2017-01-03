@@ -41,7 +41,6 @@ load time ~ 1.1seconds for 100k elements, 100k queries made, single process
 query halfwindow range 0-0.001 lat lon space (tight search windows)
 { queriesTimeMS: 13400, queriesPerSecond: 7462.686567164179 }
 
-
 query halfwindow range 0-0.02 lat lon space (medium search windows)
 { queriesTimeMS: 7256, queriesPerSecond: 13781.697905181918 }
 
