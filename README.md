@@ -4,11 +4,16 @@ kind of a 3D in memory document db. ~~so far it's slow~~, and needs work (testin
 
 in memory cache for documents querying by lat, lon boundaries, and time sorted
   * kv store & ordered array by score (timestamp)
-  * query seeks backward from end of array and finds all values in region
-  * medium/large overlapping region scans can find recent events fast (quicker)
-  * tiny boundaries within region with no matches scans through entire collection (slower)
-  * single process (have not setup node cluster yet, should be easy to do so for queries)
+  * determines from grid whether to do a full scan or grid bucket scan
+  * medium/large overlapping region scans can find highest score events in microseconds
+    * query seeks backward from end of array and finds all values in region
+  * tiny/small boundaries within region use grid buckets to match in a millisecond or less
+    * query creates heap from nearby grid contents, sorts and returns
+  * single process - sharing read access to the memory doesn't jive with node cluster module well
 
+next steps?:
+  * convert core functionality to a lower level language, even faster per process performance
+  * utilize read threads for queries to support multiple cores
 
 
 hybrid backwards time search algorithm, 100k docs, 100k queries made
