@@ -7,7 +7,6 @@
   "author": "victusfate",
   "license": "MIT",
   "dependencies": {
-    "binary-search-tree": "^0.2.6",
     "bluebird": "^3.4.7",
     "geolib": "^2.0.22"
   }

@@ -6,12 +6,28 @@ const lowerLeft = [-74.009180, 40.716425];
 const deltaLon  = 2 * Math.abs(center[0] - lowerLeft[0]);
 const deltaLat  = 2 * Math.abs(center[1] - lowerLeft[1]);
 
+// explored 40x40,20x20,10x10
+// works in conjuction with NBucketThreshold the algorithm switch
+//   if N total within buckets > threshold does full scan backwards on ordered array of events
+//   else it takes all bucket arrays, combines, sorts and keeps N highest (faster than select N tree methods explored)
+// if the most likely query is large, smaller bucket dims work faster, due to quicker intermediate grid sums
+const NLat = 10;
+const NLon = 10;
+const NBucketThreshold = 5000;
+const halfWinLonScale = 0.04;
+const halfWinLatScale = 0.04;
+
+const NItems    = 100000;
+const NQueries  = 100000;
 
 const pb = new Pinball({
-  lowerLatitude  : lowerLeft[1],
-  upperLatitude  : lowerLeft[1] + deltaLat,
-  lowerLongitude : lowerLeft[0],
-  upperLongitude : lowerLeft[0] + deltaLon,
+  lowerLatitude     : lowerLeft[1],
+  upperLatitude     : lowerLeft[1] + deltaLat,
+  lowerLongitude    : lowerLeft[0],
+  upperLongitude    : lowerLeft[0] + deltaLon,
+  NLatitude         : NLat,
+  NLongitude        : NLon,
+  NBucketThreshold  : NBucketThreshold
 });
 
 
@@ -139,9 +155,6 @@ const oIncidentBase = {
 }
 
 
-const NItems    = 100000;
-const NQueries  = 10000;
-
 const t0 = Date.now();
 
 // let aItems = [];
@@ -165,6 +178,8 @@ for (let i=0;i < NItems;i++) {
   pb.upsert(oItem)
 }
 
+pb.printGrid();
+
 const t1 = Date.now();
 console.log('load time',t1-t0);
 
@@ -177,15 +192,15 @@ let aPromises = [];
 for (let i=0;i < NQueries;i++) {
   const searchLon       = lowerLeft[0] + Math.random() * deltaLon;
   const searchLat       = lowerLeft[1] + Math.random() * deltaLat;
-  const halfWinLon      = Math.random() * 0.02;
-  const halfWinLat      = Math.random() * 0.02;
+  const halfWinLon      = Math.random() * halfWinLonScale;
+  const halfWinLat      = Math.random() * halfWinLatScale;
 
   const lowerLatitude   = searchLat - halfWinLat;
   const lowerLongitude  = searchLon - halfWinLon;
   const upperLatitude   = searchLat + halfWinLat;
   const upperLongitude  = searchLon + halfWinLon;
 
-  console.log('search args', lowerLatitude,lowerLongitude,upperLatitude,upperLongitude,N)
+  // console.log('search args', lowerLatitude,lowerLongitude,upperLatitude,upperLongitude,N)
 
   const fQuery = () => {
     const sAction = 'fQuery';

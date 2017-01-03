@@ -11,23 +11,37 @@ in memory cache for documents querying by lat, lon boundaries, and time sorted
 
 
 
-brute force backwards time search, 100k docs, 100k queries made
+hybrid backwards time search algorithm, 100k docs, 100k queries made
+
+```
+// explored 40x40,20x20,10x10
+// works in conjuction with NBucketThreshold the algorithm switch
+//   if N total within buckets > threshold does full scan backwards on ordered array of events
+//   else it takes all bucket arrays, combines, sorts and keeps N highest (faster than select N tree methods explored)
+// if the most likely query is large, smaller bucket dims work faster, due to quicker intermediate grid sums
+const NLat = 10;
+const NLon = 10;
+const NBucketThreshold = 5000;
+const halfWinLonScale = 0.04;
+const halfWinLatScale = 0.04;
+
 ```
 
-0 size query windows lat lon space (worst case)
+```
+load time ~ 1.1seconds for 100k elements, 100k queries made, single process
+
+0 size query windows lat lon space (pinhole)
+{ queriesTimeMS: 4477, queriesPerSecond: 22336.38597274961 }
+
+query halfwindow range 0-0.001 lat lon space (very small search windows)
+{ queriesTimeMS: 13400, queriesPerSecond: 7462.686567164179 }
 
 
 query halfwindow range 0-0.02 lat lon space (small search windows)
+{ queriesTimeMS: 7256, queriesPerSecond: 13781.697905181918 }
+
 messel@messels-MBP:~/Desktop/Dropbox/code/js/db_tuts/pinball_tut/test$ node query.js 
-load time 1235
-{ queriesTimeMS: 11382, queriesPerSecond: 8785.802143735724 }
-
-queries, query halfwindow range 0-0.04 lat lon space (larger search windows)
-messel@messels-MBP:~/Desktop/Dropbox/code/js/db_tuts/pinball_tut/test$ node query.js 
-load time 1238
-{ queriesTimeMS: 3951, queriesPerSecond: 25310.048089091368 }
-
-
+{ queriesTimeMS: 4171, queriesPerSecond: 23975.06593143131 }
 ```
   
   
