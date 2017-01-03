@@ -1,6 +1,6 @@
 # pinballDB
 
-kind of a 3D in memory document db. ~~so far it's slow~~, and needs work (bug for internal sorts).
+kind of a 3D in memory document db. ~~so far it's slow~~, and needs work (testing!).
 
 in memory cache for documents querying by lat, lon boundaries, and time sorted
   * kv store & ordered array by score (timestamp)
