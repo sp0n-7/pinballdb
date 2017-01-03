@@ -38,13 +38,14 @@ load time ~ 1.1seconds for 100k elements, 100k queries made, single process
 0 size query windows lat lon space (pinhole)
 { queriesTimeMS: 4477, queriesPerSecond: 22336.38597274961 }
 
-query halfwindow range 0-0.001 lat lon space (very small search windows)
+query halfwindow range 0-0.001 lat lon space (tight search windows)
 { queriesTimeMS: 13400, queriesPerSecond: 7462.686567164179 }
 
 
-query halfwindow range 0-0.02 lat lon space (small search windows)
+query halfwindow range 0-0.02 lat lon space (medium search windows)
 { queriesTimeMS: 7256, queriesPerSecond: 13781.697905181918 }
 
+query halfwindow range 0-0.04 lat lon space (large search windows)
 messel@messels-MBP:~/Desktop/Dropbox/code/js/db_tuts/pinball_tut/test$ node query.js 
 { queriesTimeMS: 4171, queriesPerSecond: 23975.06593143131 }
 ```
