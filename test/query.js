@@ -1,5 +1,4 @@
 const Pinball   = require('../lib/pinball')
-const Promise   = require("bluebird");
 
 const center    = [-73.993549, 40.727248];
 const lowerLeft = [-74.009180, 40.716425];
@@ -11,13 +10,13 @@ const deltaLat  = 2 * Math.abs(center[1] - lowerLeft[1]);
 //   if N total within buckets > threshold does full scan backwards on ordered array of events
 //   else it takes all bucket arrays, combines, sorts and keeps N highest (faster than select N tree methods explored)
 // if the most likely query is large, smaller bucket dims work faster, due to quicker intermediate grid sums
-const NLat = 10;
-const NLon = 10;
+const NLat = 14;
+const NLon = 14;
 const NBucketThreshold = 5000;
-const halfWinLonScale = 0.04;
-const halfWinLatScale = 0.04;
+const halfWinLonScale = 0.001;
+const halfWinLatScale = 0.001;
 
-const NItems    = 100000;
+const NItems    = 200000;
 const NQueries  = 100000;
 
 const pb = new Pinball({
@@ -187,8 +186,8 @@ console.log('load time',t1-t0);
 
 const N = 20;
 
-
-let aPromises = [];
+let aResults = [];
+// let aPromises = [];
 for (let i=0;i < NQueries;i++) {
   const searchLon       = lowerLeft[0] + Math.random() * deltaLon;
   const searchLat       = lowerLeft[1] + Math.random() * deltaLat;
@@ -202,35 +201,24 @@ for (let i=0;i < NQueries;i++) {
 
   // console.log('search args', lowerLatitude,lowerLongitude,upperLatitude,upperLongitude,N)
 
-  const fQuery = () => {
-    const sAction = 'fQuery';
-    // return Promise.resolve(pb.query({
-    return Promise.resolve(pb.query({
-      lowerLatitude   : lowerLatitude,
-      lowerLongitude  : lowerLongitude,
-      upperLatitude   : upperLatitude,
-      upperLongitude  : upperLongitude,
-      N               : N
-    }));
-  }
+  aResults.push(pb.query({
+    lowerLatitude   : lowerLatitude,
+    lowerLongitude  : lowerLongitude,
+    upperLatitude   : upperLatitude,
+    upperLongitude  : upperLongitude,
+    N               : N
+  }));
 
-  aPromises.push(fQuery());
 }
 
 
-Promise.all(aPromises).then( (aResults) => {
-  let t2 = Date.now();
-  console.log({ queriesTimeMS: t2-t1, queriesPerSecond: NQueries / ( (t2-t1)/1000 ) })
-  // for (let ind=0;ind < aResults.length;ind++) {
-    let ind = aResults.length - 1;
-    console.log('iQuery',ind);
-    for (let j=0;j < aResults[ind].length;j++) {
-      console.log(aResults[ind][j].id,aResults[ind][j].ts,aResults[ind][j].latitude,aResults[ind][j].longitude)
-    }    
-  // }
-  process.exit(0);
-})
-.catch( (err) => {
-  throw err;
-})       
+let t2 = Date.now();
+console.log({ queriesTimeMS: t2-t1, queriesPerSecond: NQueries / ( (t2-t1)/1000 ) })
+// for (let ind=0;ind < aResults.length;ind++) {
+  let ind = aResults.length - 1;
+  console.log('iQuery',ind);
+  for (let j=0;j < aResults[ind].length;j++) {
+    console.log(aResults[ind][j].id,aResults[ind][j].ts,aResults[ind][j].latitude,aResults[ind][j].longitude)
+  }    
+// }
 
