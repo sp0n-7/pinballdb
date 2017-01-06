@@ -12,10 +12,10 @@ for (let i = 0;i < N;i++) {
 }
 
 for (let i = N; i < 2*N;i++) {
-  let oItem = { id: '-k'+i, val: i - N };
+  let val: i - N;
   const options0 = {
     aArray  : anArray,
-    val     : oItem.val
+    val     : val
   }
 
   let index = binarySearch(options0);
