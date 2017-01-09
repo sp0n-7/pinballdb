@@ -19,18 +19,27 @@ const pub = getRedisClient();
 const sub = getRedisClient();
 
 const upsertDoc = (oDoc) => {
-  return pub.hmsetAsync(oDoc.id, oDoc);
+  return pub.hmsetAsync(oDoc.id, oDoc).then( (res) => {
+    pub.publish('upsert', JSON.stringify(oDoc));
+    return res;
+  });
 }
 
 const removeDoc = (id) => {
   return getDoc(id).then( (oDoc) => {
     let aKeys = Object.keys(oDoc);
-    return pub.hdelAsync(id,aKeys);
+    return pub.hdelAsync(id,aKeys).then( (res) => {
+      pub.publish('remove', id);
+      return res;
+    })
   })
 }
 
 const getDoc = (id) => {
-  return pub.hgetallAsync(id);
+  return pub.hgetallAsync(id).then( (res) => {
+    pub.publish('get', id);
+    return res;
+  })
 }
 
 const getTime = (tClock) => {
@@ -38,7 +47,10 @@ const getTime = (tClock) => {
   return (dT[0]*1000) + (dT[1] / 1000000);
 }
 
-sub.on('psubscribe', function (channel, count) {
+// psubscribe and pmessage is kinda nutz, emits disconnected keyspace and keyevent pmessages
+// just manually publish and subscribe
+// sub.on('psubscribe', function (channel, count) {
+sub.on('subscribe', function (channel, count) {
   const a = { id: 'a', yoo: 'hoo', isGood: false, and: 100, isGreaterThan: 99.9 };
 
   const N = 1;
@@ -100,14 +112,21 @@ sub.on('psubscribe', function (channel, count) {
 
 })
 
-sub.on('pmessage', (channel, message) => {
-  console.log('sub channel',channel,'message',message);
-
+// sub.on('pmessage', (channel, message) => {
+sub.on('message', (channel, message) => {
+  let logMessage = message;
+  if (channel === 'upsert') {
+    logMessage = JSON.parse(message);
+  }
+  console.log('sub channel',channel,'message',logMessage,'type?');
 });
 
 
 
-sub.psubscribe('*');
+// sub.psubscribe('*');
+sub.subscribe('upsert');
+sub.subscribe('remove');
+sub.subscribe('get');
 
 
 

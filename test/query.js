@@ -1,5 +1,11 @@
 const Pinball   = require('../lib/pinball')
 
+const getTime = (tClock) => {
+  const dT = process.hrtime(tClock);
+  return (dT[0]*1000) + (dT[1] / 1000000);
+}
+
+
 const center    = [-73.993549, 40.727248];
 const lowerLeft = [-74.009180, 40.716425];
 const deltaLon  = 2 * Math.abs(center[0] - lowerLeft[0]);
@@ -16,8 +22,8 @@ const NBucketThreshold = 5000;
 const halfWinLonScale = 0.001;
 const halfWinLatScale = 0.001;
 
-const NItems    = 200000;
-const NQueries  = 100000;
+const NItems    = 1;
+const NQueries  = 1;
 
 const pb = new Pinball({
   lowerLatitude     : lowerLeft[1],
