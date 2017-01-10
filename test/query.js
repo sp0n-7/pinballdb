@@ -24,7 +24,7 @@ const NBucketThreshold = 5000;
 const halfWinLonScale = 0.001;
 const halfWinLatScale = 0.001;
 
-const NItems    = 1;
+const NItems    = 100000;
 const NQueries  = 1;
 
 const pb = new Pinball({
@@ -165,7 +165,9 @@ pb.addSubscriber(sCacheUrl)
 
   const t0 = Date.now();
 
-  let aUpsertPromises = [];
+  let aItems = [];
+  let aIds   = [];
+  // let aUpsertPromises = [];
   for (let i=0;i < NItems;i++) {
     const id = '-k' + i;
     const ll = [lowerLeft[1] + Math.random() * deltaLat,lowerLeft[0] + Math.random() * deltaLon];
@@ -185,54 +187,89 @@ pb.addSubscriber(sCacheUrl)
     // pb._upsert(oItem)
 
     // async cache, so all pinballs are updated
-    aUpsertPromises.push(pb.upsertCache(oItem));
+    // redis protocol issues with 100k+ concurrent
+    // aUpsertPromises.push(pb.upsertCache(oItem));
+    aItems.push(oItem);
+    aIds.push(id);
   }
 
-  Promise.all(aUpsertPromises).then( () => {
-    pb.printGrid();
-
+  // Promise.all(aUpsertPromises).then( () => {
+  pb.batchUpsertCache(aItems).then( () => {
     const t1 = Date.now();
-    console.log('load time',t1-t0);
+    console.log('load cache time',t1-t0);
+
+    // now all events have been added to the cache
+    // but pubsub flow and local upsert latency occurs
+
+    setTimeout( () => {
+      pb.printGrid();
+
+      const t2 = Date.now();
+
+      const N = 20;
+
+      let aResults = [];
+      // let aPromises = [];
+      for (let i=0;i < NQueries;i++) {
+        const searchLon       = lowerLeft[0] + Math.random() * deltaLon;
+        const searchLat       = lowerLeft[1] + Math.random() * deltaLat;
+        const halfWinLon      = Math.random() * halfWinLonScale;
+        const halfWinLat      = Math.random() * halfWinLatScale;
+
+        const lowerLatitude   = searchLat - halfWinLat;
+        const lowerLongitude  = searchLon - halfWinLon;
+        const upperLatitude   = searchLat + halfWinLat;
+        const upperLongitude  = searchLon + halfWinLon;
+
+        // console.log('search args', lowerLatitude,lowerLongitude,upperLatitude,upperLongitude,N)
+
+        aResults.push(pb.query({
+          lowerLatitude   : lowerLatitude,
+          lowerLongitude  : lowerLongitude,
+          upperLatitude   : upperLatitude,
+          upperLongitude  : upperLongitude,
+          N               : N
+        }));
+
+      }
 
 
-
-    const N = 20;
-
-    let aResults = [];
-    // let aPromises = [];
-    for (let i=0;i < NQueries;i++) {
-      const searchLon       = lowerLeft[0] + Math.random() * deltaLon;
-      const searchLat       = lowerLeft[1] + Math.random() * deltaLat;
-      const halfWinLon      = Math.random() * halfWinLonScale;
-      const halfWinLat      = Math.random() * halfWinLatScale;
-
-      const lowerLatitude   = searchLat - halfWinLat;
-      const lowerLongitude  = searchLon - halfWinLon;
-      const upperLatitude   = searchLat + halfWinLat;
-      const upperLongitude  = searchLon + halfWinLon;
-
-      // console.log('search args', lowerLatitude,lowerLongitude,upperLatitude,upperLongitude,N)
-
-      aResults.push(pb.query({
-        lowerLatitude   : lowerLatitude,
-        lowerLongitude  : lowerLongitude,
-        upperLatitude   : upperLatitude,
-        upperLongitude  : upperLongitude,
-        N               : N
-      }));
-
-    }
-
-
-    let t2 = Date.now();
-    console.log({ queriesTimeMS: t2-t1, queriesPerSecond: NQueries / ( (t2-t1)/1000 ) })
-    // for (let ind=0;ind < aResults.length;ind++) {
+      let t3 = Date.now();
+      console.log({ queriesTimeMS: t3-t2, queriesPerSecond: NQueries / ( (t3-t2)/1000 ) })
+      // for (let ind=0;ind < aResults.length;ind++) {
       let ind = aResults.length - 1;
       console.log('iQuery',ind);
       for (let j=0;j < aResults[ind].length;j++) {
         console.log(aResults[ind][j].id,aResults[ind][j].ts,aResults[ind][j].latitude,aResults[ind][j].longitude)
       }    
-    // }
+      // }
+
+      // lets clear the cache and check that pubsub flow
+      // let aRemovePromises = [];
+      // for (let i=0;i < NItems;i++) {
+      //   const id = '-k' + i;
+      //   aRemovePromises.push(pb.removeFromCache(id));
+      // }
+      let t4 = Date.now();
+      // Promise.all(aRemovePromises).then( () => {
+      pb.batchRemoveFromCache(aIds).then( () => {
+        console.log('clear cache time',Date.now()-t4);
+
+        // now all events have been removed from cache
+        // but pubsub flow and local upsert may not have completed
+        setTimeout( () => {
+          pb.printGrid();
+          process.exit(0);
+
+        },500);
+
+      })
+      .catch( err => {
+        console.error({ action: 'query.Promise.all.aRemovePromises.err', err: err });
+        throw err;
+      })
+
+    },500)
   })
   .catch( err => {
     console.error({ action: 'query.Promise.all.aUpsertPromises.err', err: err });
