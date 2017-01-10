@@ -18,6 +18,30 @@ const getRedisClient = () => {
 const pub = getRedisClient();
 const sub = getRedisClient();
 
+// let cursor = '0';
+
+const scan = (pattern,cursorIn,returnSet) => {
+  let cursor = cursorIn || '0';
+  return pub.scanAsync(cursor, 'MATCH', pattern, 'COUNT', '100000').then( (res) => {
+    cursor = res[0];
+    if (Array.isArray(returnSet)) {
+      returnSet = returnSet.concat(res[1]);
+    }
+    else {
+      returnSet = res[1];
+    }
+    if(cursor === '0'){
+      console.log('Scan Complete');
+      return returnSet;
+    }
+    else {
+      // do your processing
+      return scan(pattern,cursor,returnSet);
+    }
+  });
+}
+
+
 
 const upsertDoc = (oDoc) => {
   return pub.hmsetAsync(oDoc.id, oDoc).then( (res) => {
@@ -103,8 +127,16 @@ sub.on('subscribe', function (channel, count) {
     aPromises.push(go());
   }
 
+  let t4;
+
   Promise.all(aPromises)
   .then( () => {
+    t4 = process.hrtime();
+    return scan('*');
+  })
+  .then( (aKeys) => {
+    console.log('time',getTime(t4),'scan',aKeys);
+
     console.log({ action: 'test complete', tUpAvg: tUpSum/N, tGetAvg: tGetSum/N, tDelAvg: tDelSum/N, tAllAvg: tAllSum/N, tTotal: getTime(start) });
     process.exit(0);
   })
