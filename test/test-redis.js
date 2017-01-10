@@ -18,6 +18,7 @@ const getRedisClient = () => {
 const pub = getRedisClient();
 const sub = getRedisClient();
 
+
 const upsertDoc = (oDoc) => {
   return pub.hmsetAsync(oDoc.id, oDoc).then( (res) => {
     pub.publish('upsert', JSON.stringify(oDoc));
@@ -105,9 +106,11 @@ sub.on('subscribe', function (channel, count) {
   Promise.all(aPromises)
   .then( () => {
     console.log({ action: 'test complete', tUpAvg: tUpSum/N, tGetAvg: tGetSum/N, tDelAvg: tDelSum/N, tAllAvg: tAllSum/N, tTotal: getTime(start) });
+    process.exit(0);
   })
   .catch( err => {
     console.error({ action: 'test error', err:err });
+    process.exit(1);    
   })
 
 })
@@ -118,7 +121,7 @@ sub.on('message', (channel, message) => {
   if (channel === 'upsert') {
     logMessage = JSON.parse(message);
   }
-  console.log('sub channel',channel,'message',logMessage,'type?');
+  console.log('sub.on.message channel',channel,'message',logMessage);
 });
 
 
