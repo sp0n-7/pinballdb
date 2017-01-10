@@ -205,6 +205,7 @@ pb.addSubscriber(sCacheUrl)
     // now all events have been added to the cache
     // but pubsub flow and local upsert latency occurs
 
+    console.log('waiting a few seconds to allow all pubsub inserts and cpu to settle')
     setTimeout( () => {
       pb.printGrid();
 
@@ -273,7 +274,7 @@ pb.addSubscriber(sCacheUrl)
         throw err;
       })
 
-    },500)
+    },5000)
   })
   .catch( err => {
     console.error({ action: 'query.Promise.all.aUpsertPromises.err', err: err });
