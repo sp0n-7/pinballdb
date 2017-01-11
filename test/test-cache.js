@@ -1,6 +1,6 @@
 const cache             = require('../lib/cache');
 const subscribeToCache  = cache.subscribeToCache;
-const CacheWriter       = cache.CacheWriter;
+const Cache             = cache.Cache;
 const getDocId          = cache.getDocId;
 const getCacheId        = cache.getCacheId;
 
@@ -11,16 +11,16 @@ const getTime = (tClock) => {
 }
 
 const sCacheUrl = 'redis://localhost:6379';
-const pub       = new CacheWriter({ sCacheUrl: sCacheUrl });
+const pub       = new Cache({ sCacheUrl: sCacheUrl });
 
-const sCityCode = 'nyc';
+const cityCode  = 'nyc';
 let   oProcs    = {};
 
-oProcs[`pb:${sCityCode}:upsert`] = (oDoc) => {
+oProcs[`pb:${cityCode}:upsert`] = (oDoc) => {
   console.log({ action: 'subscriber.proc.upsert', oDoc:oDoc });
 }
 
-oProcs[`pb:${sCityCode}:remove`] = (cacheId) => {
+oProcs[`pb:${cityCode}:remove`] = (cacheId) => {
   const oDocId = getDocId(cacheId);
   console.log({ action: 'subscriber.proc.remove', oDocId: oDocId });
 }
@@ -48,7 +48,7 @@ subscribeToCache(oSubscriberOptions).then( sub => {
     const a = {
       id: 'a'+i,
       "address" : "780 3rd Ave, New York, NY 10017, USA",
-      "cityCode" : "nyc",
+      "cityCode" : cityCode,
       "hasVod" : true,
       "level" : 1,
       "liveStreamers" : {
@@ -187,23 +187,23 @@ subscribeToCache(oSubscriberOptions).then( sub => {
         .catch( err => {
           console.error('get.err',err);
         })
-        .then( (oData) => {
-          // console.log('get',oData)
-          tGetSum += getTime(t2);
-          t3 = process.hrtime();
-          return pub.removeCacheId(cacheId);
-          // return pub.removeDoc({ id: a.id, cityCode: a.cityCode }); // different way of removing the same item
-        })
-        .catch( err => {
-          console.error('remove.err',err);
-        })
-        .then( () => {
-          tDelSum += getTime(t3);
-          return pub.getWithCacheId(cacheId);
-        })
-        .catch( err => {
-          console.error('getAfterRemoved.err',err);
-        })
+        // .then( (oData) => {
+        //   // console.log('get',oData)
+        //   tGetSum += getTime(t2);
+        //   t3 = process.hrtime();
+        //   return pub.removeCacheId(cacheId);
+        //   // return pub.removeDoc({ id: a.id, cityCode: a.cityCode }); // different way of removing the same item
+        // })
+        // .catch( err => {
+        //   console.error('remove.err',err);
+        // })
+        // .then( () => {
+        //   tDelSum += getTime(t3);
+        //   return pub.getWithCacheId(cacheId);
+        // })
+        // .catch( err => {
+        //   console.error('getAfterRemoved.err',err);
+        // })
         .then( (oData) => {
           tAllSum += getTime(t1);
           resolve();
@@ -217,11 +217,19 @@ subscribeToCache(oSubscriberOptions).then( sub => {
 
   Promise.all(aPromises)
   .then( () => {
-    // gotta wait for remove promise
-    setTimeout( () => {
-      console.log({ action: 'test complete', tUpAvg: tUpSum/N, tGetAvg: tGetSum/N, tDelAvg: tDelSum/N, tAllAvg: tAllSum/N, tTotal: getTime(start) - delayAfterDone });
-      process.exit(0);
-    }, delayAfterDone);
+    return pub.keys({ pattern: `pb:${cityCode}:*`});
+  })
+  .then( aCacheIds => {
+    console.log('keys to remove',aCacheIds);
+    return pub.batchRemoveFromCache(aCacheIds);
+  })
+  .then( () => {
+    return pub.keys({ pattern: `pb:${cityCode}:*`});
+  })
+  .then( aCacheIds => {
+    console.log('keys after removal',aCacheIds);
+    console.log({ action: 'test complete', tUpAvg: tUpSum/N, tGetAvg: tGetSum/N, tDelAvg: tDelSum/N, tAllAvg: tAllSum/N, tTotal: getTime(start)});
+    process.exit(0);
   })
   .catch( err => {
     console.error({ action: 'test error', err:err });

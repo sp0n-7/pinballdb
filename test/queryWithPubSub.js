@@ -2,10 +2,11 @@ const Pinball      = require('../lib/pinball');
 
 // for loading event data into cache
 const cache        = require('../lib/cache');
-const CacheWriter  = cache.CacheWriter;
+const Cache        = cache.Cache;
 const sCacheUrl    = 'redis://localhost:6379';
-const cacheDB      = new CacheWriter({ sCacheUrl : sCacheUrl });
+const cacheDB      = new Cache({ sCacheUrl : sCacheUrl });
 
+const cityCode     = 'nyc';
 
 const getTime = (tClock) => {
   const dT = process.hrtime(tClock);
@@ -42,11 +43,11 @@ const pb = new Pinball({
   NBucketThreshold  : NBucketThreshold
 });
 
-pb.addSubscriber(sCacheUrl)
+pb.addSubscriber({ sCacheUrl: sCacheUrl, cityCode: cityCode })
 .then( () => {
   const oIncidentBase = {
     "address" : "780 3rd Ave, New York, NY 10017, USA",
-    "cityCode" : "nyc",
+    "cityCode" : cityCode,
     "hasVod" : true,
     "level" : 1,
     "liveStreamers" : {
@@ -169,9 +170,9 @@ pb.addSubscriber(sCacheUrl)
 
   const t0 = Date.now();
 
-  let aItems = [];
-  let aIds   = [];
-  // let aUpsertPromises = [];
+  let aItems    = [];
+  let aCacheIds = [];
+
   for (let i=0;i < NItems;i++) {
     const id = '-k' + i;
     const ll = [lowerLeft[1] + Math.random() * deltaLat,lowerLeft[0] + Math.random() * deltaLon];
@@ -187,14 +188,8 @@ pb.addSubscriber(sCacheUrl)
       key         : id
     });
 
-    // sync direct local upsert
-    // pb._upsert(oItem)
-
-    // async cache, so all pinballs are updated
-    // redis protocol issues with 100k+ concurrent
-    // aUpsertPromises.push(pb.upsertCache(oItem));
     aItems.push(oItem);
-    aIds.push(id);
+    aCacheIds.push(cache.getCacheId({ id: id, cityCode: cityCode }));
   }
 
   // Promise.all(aUpsertPromises).then( () => {
@@ -249,15 +244,9 @@ pb.addSubscriber(sCacheUrl)
       }    
       // }
 
-      // lets clear the cache and check that pubsub flow
-      // let aRemovePromises = [];
-      // for (let i=0;i < NItems;i++) {
-      //   const id = '-k' + i;
-      //   aRemovePromises.push(pb.removeFromCache(id));
-      // }
       let t4 = Date.now();
-      // Promise.all(aRemovePromises).then( () => {
-      cacheDB.batchRemoveFromCache(aIds).then( () => {
+
+      cacheDB.batchRemoveFromCache(aCacheIds).then( () => {
         console.log('clear cache time',Date.now()-t4);
 
         // now all events have been removed from cache

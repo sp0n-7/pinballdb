@@ -1,9 +1,11 @@
 // for loading event data into cache
 const cache        = require('../lib/cache');
-const CacheWriter  = cache.CacheWriter;
+const Cache        = cache.Cache;
+const getCacheId   = cache.getCacheId;
 const sCacheUrl    = 'redis://localhost:6379';
-const cacheDB      = new CacheWriter({ sCacheUrl : sCacheUrl });
+const cacheDB      = new Cache({ sCacheUrl : sCacheUrl });
 
+const cityCode     = 'nyc';
 
 const getTime = (tClock) => {
   const dT = process.hrtime(tClock);
@@ -14,15 +16,32 @@ const NItems    = 100000;
 
 
 
-let aIds   = [];
+let aCacheIds   = [];
 for (let i=0;i < NItems;i++) {
   const id = '-k' + i;
-  aIds.push(id);
+  aCacheIds.push(getCacheId({ id: id, cityCode: cityCode }));
 }
 
 const t0 = Date.now();
-cacheDB.batchRemoveFromCache(aIds).then( () => {
+cacheDB.keys({ pattern: '*'})
+.then( aKeys => {
+  console.log('keys before',aKeys);
+  return cacheDB.batchRemoveFromCache(aCacheIds)
+})  
+.then( () => {
   console.log('clear cache time',Date.now()-t0);
+  return cacheDB.keys({ pattern: '*'});
+})
+.then( aKeys => {
+  console.log('keys after',aKeys);
+  return cacheDB.batchRemoveFromCache(aKeys);
+})
+.then( () => {
+  return cacheDB.keys({ pattern: '*'});
+})
+.then( aKeys => {
+  console.log('final keys after',aKeys);
+  process.exit(0);
 })
 .catch( err => {
   console.error({ action: 'clearCache.Promise.all.aRemovePromises.err', err: err });
