@@ -1,9 +1,10 @@
 // for loading event data into cache
 const cache        = require('../lib/cache');
-const CacheWriter  = cache.CacheWriter;
+const Cache        = cache.Cache;
 const sCacheUrl    = 'redis://localhost:6379';
-const cacheDB      = new CacheWriter({ sCacheUrl : sCacheUrl });
+const cacheDB      = new Cache({ sCacheUrl : sCacheUrl });
 
+const cityCode     = 'nyc';
 
 const getTime = (tClock) => {
   const dT = process.hrtime(tClock);
@@ -20,7 +21,7 @@ const NItems    = 100000;
 
 const oIncidentBase = {
   "address" : "780 3rd Ave, New York, NY 10017, USA",
-  "cityCode" : "nyc",
+  "cityCode" : cityCode,
   "hasVod" : true,
   "level" : 1,
   "liveStreamers" : {
@@ -142,9 +143,9 @@ const oIncidentBase = {
 }
 
 const t0 = Date.now();
+let t1,t2,t3;
 
-let aItems = [];
-let aIds   = [];
+let aItems    = [];
 // let aUpsertPromises = [];
 for (let i=0;i < NItems;i++) {
   const id = '-k' + i;
@@ -165,12 +166,26 @@ for (let i=0;i < NItems;i++) {
   // redis protocol issues with 100k+ concurrent
   // aUpsertPromises.push(pb.upsertCache(oItem));
   aItems.push(oItem);
-  aIds.push(id);
 }
 
 cacheDB.batchUpsertCache(aItems).then( () => {
-  const t1 = Date.now();
+  t1 = Date.now();
   console.log('load cache time',t1-t0);
+  const scanPattern = `pb:${cityCode}:*`; // used for keys
+  const setKey      = cache.getSortedSetName(cityCode);
+  console.log('setKey',setKey);
+  // return cacheDB.keys({ setKey: setKey, pattern: scanPattern }); // unordered but pages
+  return cacheDB.orderedKeys({ setKey: setKey });
+})
+.then( aKeys => {
+  t2 = Date.now();
+  console.log('scanned keys',aKeys,'time',t2-t1);
+  return cacheDB.batchGetFromCache(aKeys);
+})
+.then( aObjects => {
+  t3 = Date.now();
+  console.log('batchGetFromCache',aObjects.length,'time',t3-t2);
+  process.exit(0);
 })
 .catch( err => {
   console.error({ action: 'loadCache.Promise.all.aUpsertPromises.err', err: err });

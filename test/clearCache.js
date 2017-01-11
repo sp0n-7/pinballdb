@@ -23,7 +23,7 @@ for (let i=0;i < NItems;i++) {
 }
 
 const t0 = Date.now();
-cacheDB.keys({ pattern: '*'})
+cacheDB.keys({ pattern: `pb:${cityCode}:*`})
 .then( aKeys => {
   console.log('keys before',aKeys);
   return cacheDB.batchRemoveFromCache(aCacheIds)
@@ -34,13 +34,13 @@ cacheDB.keys({ pattern: '*'})
 })
 .then( aKeys => {
   console.log('keys after',aKeys);
-  return cacheDB.batchRemoveFromCache(aKeys);
-})
-.then( () => {
-  return cacheDB.keys({ pattern: '*'});
-})
-.then( aKeys => {
-  console.log('final keys after',aKeys);
+//   return cacheDB.batchRemoveFromCache(aKeys);
+// })
+// .then( () => {
+//   return cacheDB.keys({ pattern: '*'});
+// })
+// .then( aKeys => {
+//   console.log('final keys after',aKeys);
   process.exit(0);
 })
 .catch( err => {
