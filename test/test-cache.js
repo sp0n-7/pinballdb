@@ -1,6 +1,8 @@
 const cache             = require('../lib/cache');
 const subscribeToCache  = cache.subscribeToCache;
 const CacheWriter       = cache.CacheWriter;
+const getDocId          = cache.getDocId;
+const getCacheId        = cache.getCacheId;
 
 
 const getTime = (tClock) => {
@@ -11,16 +13,22 @@ const getTime = (tClock) => {
 const sCacheUrl = 'redis://localhost:6379';
 const pub       = new CacheWriter({ sCacheUrl: sCacheUrl });
 
+const sCityCode = 'nyc';
+let   oProcs    = {};
+
+oProcs[`pb:${sCityCode}:upsert`] = (oDoc) => {
+  console.log({ action: 'subscriber.proc.upsert', oDoc:oDoc });
+}
+
+oProcs[`pb:${sCityCode}:remove`] = (cacheId) => {
+  const oDocId = getDocId(cacheId);
+  console.log({ action: 'subscriber.proc.remove', oDocId: oDocId });
+}
+
+
 const oSubscriberOptions = {
   sCacheUrl : sCacheUrl,
-  oProcs    : {
-    upsert: (oDoc) => {
-      console.log({ action: 'subscriber.proc.upsert', oDoc:oDoc });
-    },
-    remove: (id) => {
-      console.log({ action: 'subscriber.proc.remove', id: id });
-    }
-  }
+  oProcs    : oProcs
 }
 
 // async subscriber returns with instance of CacheSubscriber
@@ -165,6 +173,7 @@ subscribeToCache(oSubscriberOptions).then( sub => {
     let go = () => {
       let t1 = process.hrtime();
       let t2,t3;
+      const cacheId = getCacheId({ id: a.id, cityCode: a.cityCode });
       return new Promise( (resolve,reject) => {
         pub.upsert(a)
         .catch( err => {
@@ -173,7 +182,7 @@ subscribeToCache(oSubscriberOptions).then( sub => {
         .then( () => {
           tUpSum += getTime(t1);
           t2 = process.hrtime();
-          return pub.get(a.id);
+          return pub.getWithDocId({ id: a.id, cityCode: a.cityCode });
         })
         .catch( err => {
           console.error('get.err',err);
@@ -182,14 +191,15 @@ subscribeToCache(oSubscriberOptions).then( sub => {
           // console.log('get',oData)
           tGetSum += getTime(t2);
           t3 = process.hrtime();
-          return pub.remove(a.id);
+          return pub.removeCacheId(cacheId);
+          // return pub.removeDoc({ id: a.id, cityCode: a.cityCode }); // different way of removing the same item
         })
         .catch( err => {
           console.error('remove.err',err);
         })
         .then( () => {
           tDelSum += getTime(t3);
-          return pub.get(a.id);
+          return pub.getWithCacheId(cacheId);
         })
         .catch( err => {
           console.error('getAfterRemoved.err',err);
