@@ -169,7 +169,7 @@ for (let i=0;i < NItems;i++) {
     id          : id,
     cs          : t0 - 10 * 60 * 1000 + i,
     ts          : t0 + i,
-    score       : t0 + i,
+    score       : t0 - 10 * 60 * 1000 + i,
     latitude    : ll[0],
     longitude   : ll[1],
     ll          : ll,

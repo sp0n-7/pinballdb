@@ -31,7 +31,7 @@ const NBucketThreshold = 5000;
 const halfWinLonScale = 0.001;
 const halfWinLatScale = 0.001;
 
-const NQueries  = 1;
+const NQueries  = 100000;
 
 const pb = new Pinball({
   lowerLatitude     : lowerLeft[1],
