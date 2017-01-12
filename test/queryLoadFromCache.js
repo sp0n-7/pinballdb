@@ -20,13 +20,12 @@ const lowerLeft = [-74.009180, 40.716425];
 const deltaLon  = 2 * Math.abs(center[0] - lowerLeft[0]);
 const deltaLat  = 2 * Math.abs(center[1] - lowerLeft[1]);
 
-// explored 40x40,20x20,10x10
 // works in conjuction with NBucketThreshold the algorithm switch
 //   if N total within buckets > threshold does full scan backwards on ordered array of events
 //   else it takes all bucket arrays, combines, sorts and keeps N highest (faster than select N tree methods explored)
 // if the most likely query is large, smaller bucket dims work faster, due to quicker intermediate grid sums
-const NLat = 14;
-const NLon = 14;
+const NLat = 40;
+const NLon = 40;
 const NBucketThreshold = 5000;
 const halfWinLonScale = 0.001;
 const halfWinLatScale = 0.001;

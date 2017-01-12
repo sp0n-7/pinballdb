@@ -11,11 +11,12 @@ const getTime = (tClock) => {
   return (dT[0]*1000) + (dT[1] / 1000000);
 }
 
-
-const center    = [-73.993549, 40.727248];
-const lowerLeft = [-74.009180, 40.716425];
-const deltaLon  = 2 * Math.abs(center[0] - lowerLeft[0]);
-const deltaLat  = 2 * Math.abs(center[1] - lowerLeft[1]);
+// ny like grid
+const lowerLeft  = [-74.262771, 40.477247];
+const upperRight = [-73.713455, 40.930374];
+const center     = [ (lowerLeft[0] + upperRight[0]) / 2.0, (lowerLeft[1] + upperRight[1])/ 2.0];
+const deltaLon   = upperRight[0] - lowerLeft[0];
+const deltaLat   = upperRight[1] - lowerLeft[1];
 
 const NItems    = 100000;
 

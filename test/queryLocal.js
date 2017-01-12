@@ -5,25 +5,26 @@ const getTime = (tClock) => {
   return (dT[0]*1000) + (dT[1] / 1000000);
 }
 
+// ny like grid
+const lowerLeft  = [-74.262771, 40.477247];
+const upperRight = [-73.713455, 40.930374];
+const center     = [ (lowerLeft[0] + upperRight[0]) / 2.0, (lowerLeft[1] + upperRight[1])/ 2.0];
+const deltaLon   = upperRight[0] - lowerLeft[0];
+const deltaLat   = upperRight[1] - lowerLeft[1];
 
-const center    = [-73.993549, 40.727248];
-const lowerLeft = [-74.009180, 40.716425];
-const deltaLon  = 2 * Math.abs(center[0] - lowerLeft[0]);
-const deltaLat  = 2 * Math.abs(center[1] - lowerLeft[1]);
 
-// explored 40x40,20x20,10x10
 // works in conjuction with NBucketThreshold the algorithm switch
 //   if N total within buckets > threshold does full scan backwards on ordered array of events
 //   else it takes all bucket arrays, combines, sorts and keeps N highest (faster than select N tree methods explored)
 // if the most likely query is large, smaller bucket dims work faster, due to quicker intermediate grid sums
-const NLat = 14;
-const NLon = 14;
+const NLat = 40;
+const NLon = 40;
 const NBucketThreshold = 5000;
 const halfWinLonScale = 0.001;
 const halfWinLatScale = 0.001;
 
 const NItems    = 100000;
-const NQueries  = 100000;
+const NQueries  = 10000;
 
 const pb = new Pinball({
   lowerLatitude     : lowerLeft[1],

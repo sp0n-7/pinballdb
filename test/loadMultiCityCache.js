@@ -1,50 +1,39 @@
-const Pinball      = require('../lib/pinball');
-
 // for loading event data into cache
 const cache        = require('../lib/cache');
 const Cache        = cache.Cache;
 const sCacheUrl    = 'redis://localhost:6379';
 const cacheDB      = new Cache({ sCacheUrl : sCacheUrl });
 
-const cityCode     = 'nyc';
-
 const getTime = (tClock) => {
   const dT = process.hrtime(tClock);
   return (dT[0]*1000) + (dT[1] / 1000000);
 }
 
-// ny like grid
-const lowerLeft  = [-74.262771, 40.477247];
-const upperRight = [-73.713455, 40.930374];
-const center     = [ (lowerLeft[0] + upperRight[0]) / 2.0, (lowerLeft[1] + upperRight[1])/ 2.0];
-const deltaLon   = upperRight[0] - lowerLeft[0];
-const deltaLat   = upperRight[1] - lowerLeft[1];
+const cityCodes    = {
+  la : {
+    name : "Los Angeles, CA",
+    boundingRectangle: { lowerLeft: [33.40163829558248,-118.7017822265625], upperRight: [34.3366324743773,-117.13897705078125] }
+  },
+  nyc : {
+    name : "New York, NY",
+    boundingRectangle: { lowerLeft: [40.47724766391948,-74.26277160644531], upperRight: [40.93037458898227,-73.71345520019531] }
+  }
+}
 
-// works in conjuction with NBucketThreshold the algorithm switch
-//   if N total within buckets > threshold does full scan backwards on ordered array of events
-//   else it takes all bucket arrays, combines, sorts and keeps N highest (faster than select N tree methods explored)
-// if the most likely query is large, smaller bucket dims work faster, due to quicker intermediate grid sums
-const NLat = 40;
-const NLon = 40;
-const NBucketThreshold = 5000;
-const halfWinLonScale = 0.001;
-const halfWinLatScale = 0.001;
+for (let cityCode in cityCodes) {
 
-const NItems    = 100000;
-const NQueries  = 10000;
+  const oCity = cityCodes[cityCode];
 
-const pb = new Pinball({
-  lowerLatitude     : lowerLeft[1],
-  upperLatitude     : lowerLeft[1] + deltaLat,
-  lowerLongitude    : lowerLeft[0],
-  upperLongitude    : lowerLeft[0] + deltaLon,
-  NLatitude         : NLat,
-  NLongitude        : NLon,
-  NBucketThreshold  : NBucketThreshold
-});
+  // convert lat,lon coords to lon,lat for pb grid
+  const lowerLeft  = [oCity.boundingRectangle.lowerLeft[1],  oCity.boundingRectangle.lowerLeft[0]];
+  const upperRight = [oCity.boundingRectangle.upperRight[1], oCity.boundingRectangle.upperRight[0]];
+  const center     = [ (lowerLeft[0] + upperRight[0]) / 2.0, (lowerLeft[1] + upperRight[1])/ 2.0];
+  const deltaLon   = upperRight[0] - lowerLeft[0];
+  const deltaLat   = upperRight[1] - lowerLeft[1];      
 
-pb.addSubscriber({ sCacheUrl: sCacheUrl, cityCode: cityCode })
-.then( () => {
+  const NItems    = 100000;
+
+  // common junk used for NY and LA events for testing
   const oIncidentBase = {
     "address" : "780 3rd Ave, New York, NY 10017, USA",
     "cityCode" : cityCode,
@@ -169,10 +158,10 @@ pb.addSubscriber({ sCacheUrl: sCacheUrl, cityCode: cityCode })
   }
 
   const t0 = Date.now();
+  let t1,t2,t3;
 
   let aItems    = [];
-  let aCacheIds = [];
-
+  // let aUpsertPromises = [];
   for (let i=0;i < NItems;i++) {
     const id = '-k' + i;
     const ll = [lowerLeft[1] + Math.random() * deltaLat,lowerLeft[0] + Math.random() * deltaLon];
@@ -188,90 +177,33 @@ pb.addSubscriber({ sCacheUrl: sCacheUrl, cityCode: cityCode })
       key         : id
     });
 
+    // async cache, so all pinballs are updated
+    // redis protocol issues with 100k+ concurrent
+    // aUpsertPromises.push(pb.upsertCache(oItem));
     aItems.push(oItem);
-    aCacheIds.push(cache.getCacheId({ id: id, cityCode: cityCode }));
   }
 
-  // Promise.all(aUpsertPromises).then( () => {
   cacheDB.batchUpsertCache(aItems).then( () => {
-    const t1 = Date.now();
+    t1 = Date.now();
     console.log('load cache time',t1-t0);
-
-    // now all events have been added to the cache
-    // but pubsub flow and local upsert latency occurs
-
-    console.log('waiting a few seconds to allow all pubsub inserts and cpu to settle')
-    setTimeout( () => {
-      pb.printGrid();
-
-      const t2 = Date.now();
-
-      const N = 20;
-
-      let aResults = [];
-      // let aPromises = [];
-      for (let i=0;i < NQueries;i++) {
-        const searchLon       = lowerLeft[0] + Math.random() * deltaLon;
-        const searchLat       = lowerLeft[1] + Math.random() * deltaLat;
-        const halfWinLon      = Math.random() * halfWinLonScale;
-        const halfWinLat      = Math.random() * halfWinLatScale;
-
-        const lowerLatitude   = searchLat - halfWinLat;
-        const lowerLongitude  = searchLon - halfWinLon;
-        const upperLatitude   = searchLat + halfWinLat;
-        const upperLongitude  = searchLon + halfWinLon;
-
-        // console.log('search args', lowerLatitude,lowerLongitude,upperLatitude,upperLongitude,N)
-
-        aResults.push(pb.query({
-          lowerLatitude   : lowerLatitude,
-          lowerLongitude  : lowerLongitude,
-          upperLatitude   : upperLatitude,
-          upperLongitude  : upperLongitude,
-          N               : N
-        }));
-
-      }
-
-
-      let t3 = Date.now();
-      console.log({ queriesTimeMS: t3-t2, queriesPerSecond: NQueries / ( (t3-t2)/1000 ) })
-      // for (let ind=0;ind < aResults.length;ind++) {
-      let ind = aResults.length - 1;
-      console.log('iQuery',ind);
-      for (let j=0;j < aResults[ind].length;j++) {
-        console.log(aResults[ind][j].id,aResults[ind][j].ts,aResults[ind][j].latitude,aResults[ind][j].longitude)
-      }    
-      // }
-
-      let t4 = Date.now();
-
-      cacheDB.batchRemoveFromCache(aCacheIds).then( () => {
-        console.log('clear cache time',Date.now()-t4);
-
-        // now all events have been removed from cache
-        // but pubsub flow and local upsert may not have completed
-        setTimeout( () => {
-          pb.printGrid();
-          process.exit(0);
-
-        },500);
-
-      })
-      .catch( err => {
-        console.error({ action: 'query.Promise.all.aRemovePromises.err', err: err });
-        throw err;
-      })
-
-    },5000)
+    const scanPattern = `pb:${cityCode}:*`; // used for keys
+    const setKey      = cache.getSortedSetName(cityCode);
+    console.log('setKey',setKey);
+    // return cacheDB.keys({ setKey: setKey, pattern: scanPattern }); // unordered but pages
+    return cacheDB.orderedKeys({ setKey: setKey });
+  })
+  .then( aKeys => {
+    t2 = Date.now();
+    console.log('scanned keys',aKeys,'time',t2-t1);
+    return cacheDB.batchGetFromCache(aKeys);
+  })
+  .then( aObjects => {
+    t3 = Date.now();
+    console.log('batchGetFromCache',aObjects.length,'time',t3-t2);
   })
   .catch( err => {
-    console.error({ action: 'query.Promise.all.aUpsertPromises.err', err: err });
+    console.error({ action: 'loadCache.Promise.all.aUpsertPromises.err', err: err });
     throw err;
   })
-})
-.catch( err => {
-  console.error({ action: 'pb.addSubscriber.err', err: err });
-  throw err;
-})
 
+}
