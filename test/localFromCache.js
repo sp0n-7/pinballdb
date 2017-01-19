@@ -1,17 +1,11 @@
 // for loading event data into cache
-const fs           = require('fs');
+const Pinball      = require('../lib/pinball');
 const cache        = require('../lib/cache');
 const Cache        = cache.Cache;
 const sCacheUrl    = 'redis://localhost:6379';
 const cacheDB      = new Cache({ sCacheUrl : sCacheUrl });
 
 const cityCode     = 'nyc';
-
-const getTime = (tClock) => {
-  const dT = process.hrtime(tClock);
-  return (dT[0]*1000) + (dT[1] / 1000000);
-}
-
 
 const t0 = Date.now();
 let t1;
@@ -35,3 +29,5 @@ cacheDB.orderedKeys({ setKey: setKey })
   console.error({ action: 'loadCache.Promise.all.aUpsertPromises.err', err: err });
   throw err;
 })
+
+
