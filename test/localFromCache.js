@@ -24,7 +24,6 @@ cacheDB.orderedKeys({ setKey: setKey })
   let t2 = Date.now();
   console.log('batchGetFromCache object length',aObjects.length,'time',t2-t1);
   cacheDB.client.quit();
-  aObjects = null;
   aObjects = [];
   for (let i = 0;i < 10;i++) {
     aObjects.push(i);

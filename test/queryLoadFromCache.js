@@ -106,6 +106,7 @@ pb.addSubscriber({ sCacheUrl: sCacheUrl })
 
   // sync query just partial data
   let t2 = Date.now();
+  setTimeout( () => {
   console.log({ queriesTimeMS: t2-t1, queriesPerSecond: NQueries / ( (t2-t1)/1000 ) })
   // for (let ind=0;ind < aResults.length;ind++) {
   let ind = aResults.length - 1;
@@ -115,6 +116,8 @@ pb.addSubscriber({ sCacheUrl: sCacheUrl })
   } 
   // }
   process.exit(0);
+
+  },10000)
 
 })
 .catch( err => {
