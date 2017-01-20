@@ -33,6 +33,7 @@ const halfWinLatScale = 0.001;
 const NQueries  = 100000;
 
 const pb = new Pinball({
+  cityCode          : cityCode,
   lowerLatitude     : lowerLeft[1],
   upperLatitude     : lowerLeft[1] + deltaLat,
   lowerLongitude    : lowerLeft[0],
@@ -44,7 +45,7 @@ const pb = new Pinball({
 
 
 const t0 = Date.now();
-pb.addSubscriber({ sCacheUrl: sCacheUrl, cityCode: cityCode })
+pb.addSubscriber({ sCacheUrl: sCacheUrl })
 .then( () => {
   const t1 = Date.now();
   console.log('addSubscriber and load from cache',t1-t0);

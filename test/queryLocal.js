@@ -20,13 +20,14 @@ const deltaLat   = upperRight[1] - lowerLeft[1];
 const NLat = 40;
 const NLon = 40;
 const NBucketThreshold = 5000;
-const halfWinLonScale = 0.001;
-const halfWinLatScale = 0.001;
+const halfWinLonScale = 0.02;
+const halfWinLatScale = 0.02;
 
 const NItems    = 100000;
 const NQueries  = 10000;
 
 const pb = new Pinball({
+  cityCode          : 'nyc',
   lowerLatitude     : lowerLeft[1],
   upperLatitude     : lowerLeft[1] + deltaLat,
   lowerLongitude    : lowerLeft[0],
@@ -173,8 +174,7 @@ for (let i=0;i < NItems;i++) {
     score       : t0 - 10 * 60 * 1000 + i,
     latitude    : ll[0],
     longitude   : ll[1],
-    ll          : ll,
-    key         : id
+    ll          : ll
   });
 
   // sync direct local upsert
@@ -220,10 +220,10 @@ for (let i=0;i < NQueries;i++) {
 let t3 = Date.now();
 console.log({ queriesTimeMS: t3-t2, queriesPerSecond: NQueries / ( (t3-t2)/1000 ) })
 // for (let ind=0;ind < aResults.length;ind++) {
-let ind = aResults.length - 1;
-console.log('iQuery',ind);
-for (let j=0;j < aResults[ind].length;j++) {
-  console.log(aResults[ind][j].id,aResults[ind][j].ts,aResults[ind][j].latitude,aResults[ind][j].longitude)
-}    
+  let ind = aResults.length - 1;
+  console.log('iQuery',ind);
+  for (let j=0;j < aResults[ind].length;j++) {
+    console.log(aResults[ind][j].id,aResults[ind][j].ts,aResults[ind][j].latitude,aResults[ind][j].longitude)
+  }    
 // }
 

@@ -10,7 +10,6 @@ const cityCode     = 'nyc';
 // ny like grid
 const lowerLeft  = [-74.262771, 40.477247];
 const upperRight = [-73.713455, 40.930374];
-const center     = [ (lowerLeft[0] + upperRight[0]) / 2.0, (lowerLeft[1] + upperRight[1])/ 2.0];
 const deltaLon   = upperRight[0] - lowerLeft[0];
 const deltaLat   = upperRight[1] - lowerLeft[1];
 
@@ -26,6 +25,7 @@ const halfWinLonScale = 0.001;
 const halfWinLatScale = 0.001;
 
 const pb = new Pinball({
+  cityCode          : cityCode,
   lowerLatitude     : lowerLeft[1],
   upperLatitude     : lowerLeft[1] + deltaLat,
   lowerLongitude    : lowerLeft[0],
@@ -36,7 +36,7 @@ const pb = new Pinball({
 });
 
 const t1 = Date.now();
-pb.loadFromCache({ sCacheUrl: sCacheUrl, cityCode: cityCode })
+pb.loadFromCache({ sCacheUrl: sCacheUrl })
 .then( () => {
   console.log({ action: 'pb.loadFromCache.complete', time: Date.now() - t1})
   process.exit(0);

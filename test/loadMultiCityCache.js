@@ -27,7 +27,6 @@ for (let cityCode in cityCodes) {
   // convert lat,lon coords to lon,lat for pb grid
   const lowerLeft  = [oCity.boundingRectangle.lowerLeft[1],  oCity.boundingRectangle.lowerLeft[0]];
   const upperRight = [oCity.boundingRectangle.upperRight[1], oCity.boundingRectangle.upperRight[0]];
-  const center     = [ (lowerLeft[0] + upperRight[0]) / 2.0, (lowerLeft[1] + upperRight[1])/ 2.0];
   const deltaLon   = upperRight[0] - lowerLeft[0];
   const deltaLat   = upperRight[1] - lowerLeft[1];      
 

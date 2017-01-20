@@ -34,6 +34,7 @@ const NItems    = 100000;
 const NQueries  = 10000;
 
 const pb = new Pinball({
+  cityCode          : cityCode,
   lowerLatitude     : lowerLeft[1],
   upperLatitude     : lowerLeft[1] + deltaLat,
   lowerLongitude    : lowerLeft[0],
@@ -43,7 +44,7 @@ const pb = new Pinball({
   NBucketThreshold  : NBucketThreshold
 });
 
-pb.addSubscriber({ sCacheUrl: sCacheUrl, cityCode: cityCode })
+pb.addSubscriber({ sCacheUrl: sCacheUrl })
 .then( () => {
   const oIncidentBase = {
     "address" : "780 3rd Ave, New York, NY 10017, USA",
