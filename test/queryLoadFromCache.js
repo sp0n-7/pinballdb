@@ -15,10 +15,11 @@ const getTime = (tClock) => {
 }
 
 
-const center    = [-73.993549, 40.727248];
-const lowerLeft = [-74.009180, 40.716425];
-const deltaLon  = 2 * Math.abs(center[0] - lowerLeft[0]);
-const deltaLat  = 2 * Math.abs(center[1] - lowerLeft[1]);
+const lowerLeft  = [-74.262771, 40.477247];
+const upperRight = [-73.713455, 40.930374];
+const deltaLon   = upperRight[0] - lowerLeft[0];
+const deltaLat   = upperRight[1] - lowerLeft[1];     
+
 
 // works in conjuction with NBucketThreshold the algorithm switch
 //   if N total within buckets > threshold does full scan backwards on ordered array of events
@@ -27,8 +28,8 @@ const deltaLat  = 2 * Math.abs(center[1] - lowerLeft[1]);
 const NLat = 40;
 const NLon = 40;
 const NBucketThreshold = 5000;
-const halfWinLonScale = 0.001;
-const halfWinLatScale = 0.001;
+const halfWinLonScale = 0.02;
+const halfWinLatScale = 0.02;
 
 const NQueries  = 100000;
 
