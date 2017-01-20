@@ -78,9 +78,33 @@ pb.addSubscriber({ sCacheUrl: sCacheUrl })
       N               : N
     }));
 
+    // aPromises.push(pb.queryAsync({
+    //   lowerLatitude   : lowerLatitude,
+    //   lowerLongitude  : lowerLongitude,
+    //   upperLatitude   : upperLatitude,
+    //   upperLongitude  : upperLongitude,
+    //   N               : N      
+    // }))
+
   }
 
+  // Promise.all(aPromises).then( aResults => {
+  //   let t2 = Date.now();
+  //   console.log({ queriesTimeMS: t2-t1, queriesPerSecond: NQueries / ( (t2-t1)/1000 ) })
+  //   // for (let ind=0;ind < aResults.length;ind++) {
+  //   let ind = aResults.length - 1;
+  //   console.log('iQuery',ind);
+  //   for (let j=0;j < aResults[ind].length;j++) {
+  //     console.log(aResults[ind][j].id,aResults[ind][j].ts,aResults[ind][j].latitude,aResults[ind][j].longitude)
+  //   } 
+  //   process.exit(0);
+  // })
+  // .catch( err => {
+  //   console.error({ action: 'pb.queryAsync.err', err:err })
+  //   process.exit(1);
+  // })
 
+  // sync query just partial data
   let t2 = Date.now();
   console.log({ queriesTimeMS: t2-t1, queriesPerSecond: NQueries / ( (t2-t1)/1000 ) })
   // for (let ind=0;ind < aResults.length;ind++) {
@@ -89,8 +113,8 @@ pb.addSubscriber({ sCacheUrl: sCacheUrl })
   for (let j=0;j < aResults[ind].length;j++) {
     console.log(aResults[ind][j].id,aResults[ind][j].ts,aResults[ind][j].latitude,aResults[ind][j].longitude)
   } 
-  process.exit(0);
   // }
+  process.exit(0);
 
 })
 .catch( err => {

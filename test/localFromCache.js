@@ -18,12 +18,21 @@ cacheDB.orderedKeys({ setKey: setKey })
 .then( aKeys => {
   t1 = Date.now();
   console.log('scanned keys length',aKeys.length,'time',t1-t0);
-  return cacheDB.batchGetFromCache(aKeys);
+  return cacheDB.batchGetFromCache({ aCacheIds : aKeys, aProps: ['id','latitude','longitude','score','cs','ts'] });
 })
 .then( aObjects => {
   let t2 = Date.now();
   console.log('batchGetFromCache object length',aObjects.length,'time',t2-t1);
-  process.exit(0);
+  cacheDB.client.quit();
+  aObjects = null;
+  aObjects = [];
+  for (let i = 0;i < 10;i++) {
+    aObjects.push(i);
+  }
+  setTimeout( () => {
+    console.log('batchGetFromCache object cleaned time');
+    process.exit(0);    
+  },10000)
 })
 .catch( err => {
   console.error({ action: 'loadCache.Promise.all.aUpsertPromises.err', err: err });

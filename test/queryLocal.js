@@ -8,7 +8,6 @@ const getTime = (tClock) => {
 // ny like grid
 const lowerLeft  = [-74.262771, 40.477247];
 const upperRight = [-73.713455, 40.930374];
-const center     = [ (lowerLeft[0] + upperRight[0]) / 2.0, (lowerLeft[1] + upperRight[1])/ 2.0];
 const deltaLon   = upperRight[0] - lowerLeft[0];
 const deltaLat   = upperRight[1] - lowerLeft[1];
 
@@ -222,6 +221,7 @@ for (let i=0;i < NQueries;i++) {
 
 
 let t3 = Date.now();
+setTimeout( () => {
 console.log({ queriesTimeMS: t3-t2, queriesPerSecond: NQueries / ( (t3-t2)/1000 ) })
 // for (let ind=0;ind < aResults.length;ind++) {
   let ind = aResults.length - 1;
@@ -230,4 +230,7 @@ console.log({ queriesTimeMS: t3-t2, queriesPerSecond: NQueries / ( (t3-t2)/1000 
     console.log(aResults[ind][j].id,aResults[ind][j].ts,aResults[ind][j].latitude,aResults[ind][j].longitude)
   }    
 // }
+
+  console.log('delay done');
+},10000)
 

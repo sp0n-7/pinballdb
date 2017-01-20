@@ -183,7 +183,7 @@ cacheDB.batchUpsertCache(aItems).then( () => {
 .then( aKeys => {
   t2 = Date.now();
   console.log('scanned keys',aKeys,'time',t2-t1);
-  return cacheDB.batchGetFromCache(aKeys);
+  return cacheDB.batchGetFromCache({ aCacheIds : aKeys });
 })
 .then( aObjects => {
   t3 = Date.now();
