@@ -38,6 +38,8 @@ const pb = new Pinball({
 });
 
 
+// the majority of this json gets thrown away
+// Pinball keeps track of id, latitude, longitude, score
 const oIncidentBase = {
   "address" : "780 3rd Ave, New York, NY 10017, USA",
   "cityCode" : "nyc",
