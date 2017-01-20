@@ -169,11 +169,13 @@ for (let i=0;i < NItems;i++) {
   const id = '-k' + i;
   const ll = [lowerLeft[1] + Math.random() * deltaLat,lowerLeft[0] + Math.random() * deltaLon];
   const oItemBase = Object.assign({}, oIncidentBase);
+  const cs = t0 - 10 * 60 * 1000 + i;
+  const ts = cs + Math.floor(Math.random() * 60000);
   const oItem = Object.assign(oItemBase, {
     id          : id,
-    cs          : t0 - 10 * 60 * 1000 + i,
-    ts          : t0 + i,
-    score       : t0 - 10 * 60 * 1000 + i,
+    cs          : cs,
+    ts          : ts,
+    score       : ts,
     latitude    : ll[0],
     longitude   : ll[1],
     ll          : ll
