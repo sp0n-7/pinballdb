@@ -7,8 +7,7 @@
   "author": "victusfate",
   "license": "MIT",
   "dependencies": {
-    "redis": "^2.6.3",
-    "zlib": "^1.0.5"
+    "redis": "^2.6.3"
   },
   "devDependencies": {
     "bluebird": "^3.4.7"
