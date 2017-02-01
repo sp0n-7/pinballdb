@@ -197,7 +197,7 @@ for (let cityCode in cityCodes) {
   .then( aKeys => {
     t2 = Date.now();
     console.log('scanned keys',aKeys,'time',t2-t1);
-    return cacheDB.batchGetFromCache({ aCacheIds : aKeys });
+    return cacheDB.batchGetFromCache({ aCacheIds : aKeys, aProps: ['id','latitude','longitude','score','cs','ts', 'll'] });
   })
   .then( aObjects => {
     t3 = Date.now();

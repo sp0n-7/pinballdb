@@ -46,7 +46,7 @@ const pb = new Pinball({
 
 
 const t0 = Date.now();
-pb.addSubscriber({ sCacheUrl: sCacheUrl })
+pb.addSubscriber({ sCacheUrl: sCacheUrl, aProps: ['id','latitude','longitude','score','cs','ts', 'll'] })
 .then( () => {
   const t1 = Date.now();
   console.log('addSubscriber and load from cache',t1-t0);

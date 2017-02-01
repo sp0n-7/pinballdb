@@ -5,8 +5,8 @@ const getCacheId   = cache.getCacheId;
 const sCacheUrl    = 'redis://localhost:6379';
 const cacheDB      = new Cache({ sCacheUrl : sCacheUrl });
 
-const cityCode     = 'nyc';
-// const cityCode     = 'la';
+// const cityCode     = 'nyc';
+const cityCode     = 'la';
 
 const getTime = (tClock) => {
   const dT = process.hrtime(tClock);
