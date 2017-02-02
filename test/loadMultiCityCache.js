@@ -1,7 +1,8 @@
 // for loading event data into cache
 const cache        = require('../lib/cache');
 const Cache        = cache.Cache;
-const sCacheUrl    = 'redis://localhost:6379';
+// const sCacheUrl    = 'redis://localhost:6379';
+const sCacheUrl = 'redis://Mark:148d284467a56529fd6d1cd8862d3091@pub-redis-12691.us-east-mz.1.ec2.garantiadata.com:12691'
 const cacheDB      = new Cache({ sCacheUrl : sCacheUrl });
 
 const getTime = (tClock) => {

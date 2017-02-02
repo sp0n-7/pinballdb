@@ -1,4 +1,6 @@
-const binarySearch = require('../lib/util').binarySearch;
+const u            = require('../lib/util');
+const binarySearch = u.binarySearch;
+const findIndex    = u.findIndex;
 
 let anArray = [];
 
@@ -8,18 +10,29 @@ for (let i = 0;i < N;i++) {
   if (i % 2) {
     val = i - 1;
   }
-  anArray.push({ id: '-k'+i, val: val})
+  if (Math.random() < 0.90) {
+    anArray.push({ id: '-k'+i, val: val})
+    // console.log('non null at',anArray[anArray.length-1])
+  }
+  else {
+    // console.log('null at',i)
+    anArray.push(null);
+  }
 }
+// console.log(anArray)
 
-for (let i = N; i < 2*N;i++) {
-  let val = i - N;
+for (let i = 0; i < N;i++) {
+  let val = i;
+  if (i % 2) {
+    val = i - 1;
+  }
+
   const options0 = {
     aArray  : anArray,
     val     : val
   }
 
   let index = binarySearch(options0);
-  // let oItem = { id: '-k'+i, val: i - N }
-  // anArray.splice(index,0, oItem)
-  console.log(`index ${index} of val ${val}`);  
+  let i2 = findIndex({ aArray: anArray, id: '-k'+i, val: val})
+  console.log(`index ${index} of val ${val} find index ${i2} of id ${'-k'+i} val ${val} is null? ${anArray[i]}`);  
 }
