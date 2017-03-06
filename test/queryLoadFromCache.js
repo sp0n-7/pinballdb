@@ -45,7 +45,7 @@ const NBucketThreshold = 5000;
 const halfWinLonScale = 0.02;
 const halfWinLatScale = 0.02;
 
-const NQueries  = 0;
+const NQueries  = 100000;
 
 const pb = new Pinball({
   cityCode          : cityCode,
