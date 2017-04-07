@@ -153,6 +153,7 @@ for (let i=0;i < NItems;i++) {
   const oItemBase = Object.assign({}, oIncidentBase);
   const cs = t0 - 10 * 60 * 1000 + i;
   const ts = cs + Math.floor(Math.random() * 60000);
+  const level = Math.floor(Math.random() * 4);
 
   const oItem = Object.assign(oItemBase, {
     id          : id,
@@ -162,7 +163,8 @@ for (let i=0;i < NItems;i++) {
     latitude    : ll[0],
     longitude   : ll[1],
     ll          : ll,
-    key         : id
+    key         : id,
+    level       : level
   });
 
   // async cache, so all pinballs are updated

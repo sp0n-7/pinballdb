@@ -170,6 +170,7 @@ for (let i=0;i < NItems;i++) {
   const oItemBase = Object.assign({}, oIncidentBase);
   const cs = t0 - 10 * 60 * 1000 + i;
   const ts = cs + Math.floor(Math.random() * 60000);
+  const level = Math.floor(Math.random() * 4);
   const oItem = Object.assign(oItemBase, {
     id          : id,
     cs          : cs,
@@ -177,7 +178,8 @@ for (let i=0;i < NItems;i++) {
     score       : ts,
     latitude    : ll[0],
     longitude   : ll[1],
-    ll          : ll
+    ll          : ll,
+    level       : level
   });
 
   // sync direct local upsert
@@ -210,11 +212,12 @@ for (let i=0;i < NQueries;i++) {
   // console.log('search args', lowerLatitude,lowerLongitude,upperLatitude,upperLongitude,N)
 
   aResults.push(pb.query({
-    lowerLatitude   : lowerLatitude,
-    lowerLongitude  : lowerLongitude,
-    upperLatitude   : upperLatitude,
-    upperLongitude  : upperLongitude,
-    N               : N
+    lowerLatitude     : lowerLatitude,
+    lowerLongitude    : lowerLongitude,
+    upperLatitude     : upperLatitude,
+    upperLongitude    : upperLongitude,
+    N                 : N,
+    minIncidentLevel  : 0
   }));
 
 }
@@ -224,12 +227,13 @@ let t3 = Date.now();
 setTimeout( () => {
 console.log({ queriesTimeMS: t3-t2, queriesPerSecond: NQueries / ( (t3-t2)/1000 ) })
 // for (let ind=0;ind < aResults.length;ind++) {
-  let ind = aResults.length - 1;
+for (let ind=aResults.length - 10;ind < aResults.length;ind++) {
+  // let ind = aResults.length - 1;
   console.log('iQuery',ind);
   for (let j=0;j < aResults[ind].length;j++) {
     console.log(aResults[ind][j].id,aResults[ind][j].ts,aResults[ind][j].latitude,aResults[ind][j].longitude)
   }    
-// }
+}
 
   console.log('delay done');
 },10000)

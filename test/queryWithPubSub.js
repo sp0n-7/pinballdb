@@ -227,11 +227,12 @@ pb.addSubscriber({ sCacheUrl: sCacheUrl })
         // console.log('search args', lowerLatitude,lowerLongitude,upperLatitude,upperLongitude,N)
 
         aResults.push(pb.query({
-          lowerLatitude   : lowerLatitude,
-          lowerLongitude  : lowerLongitude,
-          upperLatitude   : upperLatitude,
-          upperLongitude  : upperLongitude,
-          N               : N
+          lowerLatitude     : lowerLatitude,
+          lowerLongitude    : lowerLongitude,
+          upperLatitude     : upperLatitude,
+          upperLongitude    : upperLongitude,
+          N                 : N,
+          minIncidentLevel  : 0
         }));
 
       }

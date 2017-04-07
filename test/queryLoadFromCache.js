@@ -117,50 +117,26 @@ pb.addSubscriber({ sCacheUrl: sCacheUrl })
     // console.log('search args', lowerLatitude,lowerLongitude,upperLatitude,upperLongitude,N)
 
     aResults.push(pb.query({
-      lowerLatitude   : lowerLatitude,
-      lowerLongitude  : lowerLongitude,
-      upperLatitude   : upperLatitude,
-      upperLongitude  : upperLongitude,
-      N               : N
+      lowerLatitude     : lowerLatitude,
+      lowerLongitude    : lowerLongitude,
+      upperLatitude     : upperLatitude,
+      upperLongitude    : upperLongitude,
+      N                 : N,
+      minIncidentLevel  : 0
     }));
-
-    // aPromises.push(pb.queryAsync({
-    //   lowerLatitude   : lowerLatitude,
-    //   lowerLongitude  : lowerLongitude,
-    //   upperLatitude   : upperLatitude,
-    //   upperLongitude  : upperLongitude,
-    //   N               : N      
-    // }))
-
   }
-
-  // Promise.all(aPromises).then( aResults => {
-  //   let t2 = Date.now();
-  //   console.log({ queriesTimeMS: t2-t1, queriesPerSecond: NQueries / ( (t2-t1)/1000 ) })
-  //   // for (let ind=0;ind < aResults.length;ind++) {
-  //   let ind = aResults.length - 1;
-  //   console.log('iQuery',ind);
-  //   for (let j=0;j < aResults[ind].length;j++) {
-  //     console.log(aResults[ind][j].id,aResults[ind][j].ts,aResults[ind][j].latitude,aResults[ind][j].longitude)
-  //   } 
-  //   process.exit(0);
-  // })
-  // .catch( err => {
-  //   console.error({ action: 'pb.queryAsync.err', err:err })
-  //   process.exit(1);
-  // })
 
   // sync query just partial data
   let t2 = Date.now();
   setTimeout( () => {
     console.log({ queriesTimeMS: t2-t1, queriesPerSecond: NQueries / ( (t2-t1)/1000 ) })
-    // for (let ind=0;ind < aResults.length;ind++) {
-    let ind = aResults.length - 1;
-    console.log('iQuery',ind);
-    for (let j=0;j < aResults[ind].length;j++) {
-      console.log(aResults[ind][j].id,aResults[ind][j].ts,aResults[ind][j].latitude,aResults[ind][j].longitude)
-    } 
-    // }
+    for (let ind=aResults.length-10;ind < aResults.length;ind++) {
+      // let ind = aResults.length - 1;
+      console.log('iQuery',ind);
+      for (let j=0;j < aResults[ind].length;j++) {
+        console.log(aResults[ind][j].id,aResults[ind][j].ts,aResults[ind][j].latitude,aResults[ind][j].longitude)
+      } 
+    }
     process.exit(0);
 
   },10000)

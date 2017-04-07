@@ -1,8 +1,7 @@
 // for loading event data into cache
 const cache        = require('../lib/cache');
 const Cache        = cache.Cache;
-// const sCacheUrl    = 'redis://localhost:6379';
-const sCacheUrl = 'redis://Mark:148d284467a56529fd6d1cd8862d3091@pub-redis-12691.us-east-mz.1.ec2.garantiadata.com:12691'
+const sCacheUrl    = 'redis://localhost:6379';
 const cacheDB      = new Cache({ sCacheUrl : sCacheUrl });
 
 const getTime = (tClock) => {
@@ -168,6 +167,7 @@ for (let cityCode in cityCodes) {
     const oItemBase = Object.assign({}, oIncidentBase);
     const cs = t0 - 10 * 60 * 1000 + i;
     const ts = cs + Math.floor(Math.random() * 60000);
+    const level = Math.floor(Math.random() * 4);
 
     const oItem = Object.assign(oItemBase, {
       id          : id,
@@ -177,7 +177,8 @@ for (let cityCode in cityCodes) {
       latitude    : ll[0],
       longitude   : ll[1],
       ll          : ll,
-      key         : id
+      key         : id,
+      level       : level
     });
 
     // async cache, so all pinballs are updated
