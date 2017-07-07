@@ -192,11 +192,11 @@ pb.addSubscriber({ sCacheUrl: sCacheUrl })
     });
 
     aItems.push(oItem);
-    aCacheIds.push(cache.getCacheId({ id: id, cityCode: cityCode }));
+    aCacheIds.push(cache.getCacheId({ id: id }));
   }
 
   // Promise.all(aUpsertPromises).then( () => {
-  cacheDB.batchUpsertCache(aItems).then( () => {
+  cacheDB.batchUpsertCache({ aDocArray: aItems, cityCode: cityCode}).then( () => {
     const t1 = Date.now();
     console.log('load cache time',t1-t0);
 

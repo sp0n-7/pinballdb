@@ -9,7 +9,7 @@ const cityCode  = 'nyc';
 const t0 = Date.now();
 for (let i = 0; i < 100000;i++) {
   const docId = '-K' + i;
-  const sCacheId  = getCacheId({ cityCode: cityCode, id: docId });
+  const sCacheId  = getCacheId({ id: docId });
   // console.log({ sCacheId: sCacheId });
 
   const oDocId    = getDocId(sCacheId);

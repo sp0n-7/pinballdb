@@ -173,7 +173,7 @@ for (let i=0;i < NItems;i++) {
   aItems.push(oItem);
 }
 
-cacheDB.batchUpsertCache(aItems).then( () => {
+cacheDB.batchUpsertCache({ aDocArray: aItems, cityCode: cityCode }).then( () => {
   t1 = Date.now();
   console.log('load cache time',t1-t0);
   const scanPattern = `pb:${cityCode}:*`; // used for keys
