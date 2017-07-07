@@ -28,7 +28,7 @@ const t0 = Date.now();
 cacheDB.keys({ pattern: `pb:*`})
 .then( aKeys => {
   console.log('keys before',aKeys);
-  return cacheDB.batchRemoveFromCache({ aCacheIdArray: aCacheIds, cityCode: cityCode })
+  return cacheDB.batchRemoveFromCache({ aCacheIds: aCacheIds, cityCode: cityCode })
 })  
 .then( () => {
   console.log('clear cache time',Date.now()-t0);
@@ -36,7 +36,7 @@ cacheDB.keys({ pattern: `pb:*`})
 })
 .then( aKeys => {
   console.log('keys after',aKeys);
-//   return cacheDB.batchRemoveFromCache({ aCacheIdArray: aKeys, cityCode: cityCode });
+//   return cacheDB.batchRemoveFromCache({ aCacheIds: aKeys, cityCode: cityCode });
 // })
 // .then( () => {
 //   return cacheDB.keys({ pattern: '*'});

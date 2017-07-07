@@ -249,7 +249,7 @@ subscribeToCache(oSubscriberOptions).then( sub => {
   })
   .then( aCacheIds => {
     console.log('keys to remove',aCacheIds);
-    return pub.batchRemoveFromCache({ aCacheIdArray: aCacheIds, cityCode: cityCode });
+    return pub.batchRemoveFromCache({ aCacheIds: aCacheIds, cityCode: cityCode });
   })
   .then( () => {
     return pub.keys({ pattern: `pb:*`});
