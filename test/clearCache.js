@@ -6,8 +6,8 @@ const sCacheUrl    = 'redis://localhost:6379';
 
 const cacheDB      = new Cache({ sCacheUrl : sCacheUrl });
 
-// const cityCode     = 'nyc';
-const cityCode     = 'la';
+const cityCode     = 'nyc';
+// const cityCode     = 'la';
 
 const getTime = (tClock) => {
   const dT = process.hrtime(tClock);
@@ -21,14 +21,14 @@ const NItems    = 100000;
 let aCacheIds   = [];
 for (let i=0;i < NItems;i++) {
   const id = '-k' + i;
-  aCacheIds.push(getCacheId({ id: id, cityCode: cityCode }));
+  aCacheIds.push(getCacheId({ id: id }));
 }
 
 const t0 = Date.now();
-cacheDB.keys({ pattern: `pb:${cityCode}:*`})
+cacheDB.keys({ pattern: `pb:*`})
 .then( aKeys => {
   console.log('keys before',aKeys);
-  return cacheDB.batchRemoveFromCache(aCacheIds)
+  return cacheDB.batchRemoveFromCache({ aCacheIds: aCacheIds, cityCode: cityCode })
 })  
 .then( () => {
   console.log('clear cache time',Date.now()-t0);
@@ -36,7 +36,7 @@ cacheDB.keys({ pattern: `pb:${cityCode}:*`})
 })
 .then( aKeys => {
   console.log('keys after',aKeys);
-//   return cacheDB.batchRemoveFromCache(aKeys);
+//   return cacheDB.batchRemoveFromCache({ aCacheIds: aKeys, cityCode: cityCode });
 // })
 // .then( () => {
 //   return cacheDB.keys({ pattern: '*'});

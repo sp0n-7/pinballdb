@@ -187,7 +187,7 @@ for (let cityCode in cityCodes) {
     aItems.push(oItem);
   }
 
-  cacheDB.batchUpsertCache(aItems).then( () => {
+  cacheDB.batchUpsertCache({ aDocArray: aItems, cityCode: cityCode}).then( () => {
     t1 = Date.now();
     console.log('load cache time',t1-t0);
     const scanPattern = `pb:${cityCode}:*`; // used for keys
@@ -204,6 +204,7 @@ for (let cityCode in cityCodes) {
   .then( aObjects => {
     t3 = Date.now();
     console.log('batchGetFromCache',aObjects.length,'time',t3-t2);
+    process.exit(0);
   })
   .catch( err => {
     console.error({ action: 'loadCache.Promise.all.aUpsertPromises.err', err: err });
