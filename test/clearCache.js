@@ -21,7 +21,7 @@ const NItems    = 100000;
 let aCacheIds   = [];
 for (let i=0;i < NItems;i++) {
   const id = '-k' + i;
-  aCacheIds.push(getCacheId({ id: id }));
+  aCacheIds.push(cacheDB.getCacheId({ id: id }));
 }
 
 const t0 = Date.now();
