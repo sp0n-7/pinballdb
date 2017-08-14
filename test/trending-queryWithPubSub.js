@@ -1,4 +1,3 @@
-batchUpsertCache
 // for loading event data into cache
 const Trending     = require('../index').Trending
 const cache        = require('../lib/cache');
@@ -36,7 +35,7 @@ const tr = new Trending({
 });
 
 const t1 = Date.now();
-tr.loadFromCache({ sCacheUrl: sCacheUrl,setName = 'tr' })
+tr.loadFromCache({ sCacheUrl: sCacheUrl, setName: 'tr' })
 .then( () => {
   console.log({ action: 'tr.loadFromCache.complete', time: Date.now() - t1})
   process.exit(0);
