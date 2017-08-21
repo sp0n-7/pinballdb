@@ -1,11 +1,10 @@
-const Pinball      = require('../lib/pinball');
+const Trending      = require('../lib/trending');
 
 // for loading event data into cache
 const cache        = require('../lib/cache');
 const Cache        = cache.Cache;
 const sCacheUrl    = 'redis://localhost:6379';
-//const cacheDB      = new Cache({ sCacheUrl : sCacheUrl,setName:'pb',scoreProperty: 'cs' });
-const cacheDB      = new Cache({ sCacheUrl : sCacheUrl});
+const cacheDB      = new Cache({ sCacheUrl : sCacheUrl, setName: 'tr', scoreProperty: 'trendingScore' });
 
 const cityCode     = 'nyc';
 
@@ -48,7 +47,7 @@ const halfWinLatScale = 0.02;
 
 const NQueries  = 100000;
 
-const pb = new Pinball({
+const tr = new Trending({
   cityCode          : cityCode,
   lowerLatitude     : lowerLeft[1],
   upperLatitude     : lowerLeft[1] + deltaLat,
@@ -61,8 +60,8 @@ const pb = new Pinball({
 
 
 const t0 = Date.now();
-// pb.addSubscriber({ sCacheUrl: sCacheUrl, aProps: ['id','latitude','longitude','score','cs','ts', 'll'] })
-pb.addSubscriber({ sCacheUrl: sCacheUrl })
+// tr.addSubscriber({ sCacheUrl: sCacheUrl, aProps: ['id','latitude','longitude','score','cs','ts', 'll'] })
+tr.addSubscriber({ sCacheUrl: sCacheUrl })
 .then( () => {
 
   // cache update the most recent incident a bunch
@@ -70,7 +69,7 @@ pb.addSubscriber({ sCacheUrl: sCacheUrl })
   // for (let i=0;i < 10;i++) {
   //   const id = '-k99999';
   //   const ll = [lowerLeft[1] + Math.random() * deltaLat,lowerLeft[0] + Math.random() * deltaLon];
-  //   const oItemBase = pb.db[id];
+  //   const oItemBase = tr.db[id];
   //   const ts = oItemBase.ts + i;
 
   //   const oItem = Object.assign(oItemBase, {
@@ -98,7 +97,7 @@ pb.addSubscriber({ sCacheUrl: sCacheUrl })
   const t1 = Date.now();
   console.log('addSubscriber and load from cache',t1-t0);
 
-  pb.printGrid();
+  tr.printGrid();
 
   const N = 20;
 
@@ -117,7 +116,7 @@ pb.addSubscriber({ sCacheUrl: sCacheUrl })
 
     // console.log('search args', lowerLatitude,lowerLongitude,upperLatitude,upperLongitude,N)
 
-    aResults.push(pb.query({
+    aResults.push(tr.query({
       lowerLatitude     : lowerLatitude,
       lowerLongitude    : lowerLongitude,
       upperLatitude     : upperLatitude,
@@ -144,7 +143,8 @@ pb.addSubscriber({ sCacheUrl: sCacheUrl })
 
 })
 .catch( err => {
-  console.error({ action: 'pb.addSubscriber.err', err: err, stack: err.stack });
+  console.error({ action: 'tr.addSubscriber.err', err: err, stack: err.stack });
   process.exit(1);
 })
+
 

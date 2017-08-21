@@ -1,9 +1,9 @@
 // for loading event data into cache
-const Pinball      = require('../lib/pinball');
+const Trending     = require('../lib/trending');
 const cache        = require('../lib/cache');
 const Cache        = cache.Cache;
 const sCacheUrl    = 'redis://localhost:6379';
-const cacheDB      = new Cache({ sCacheUrl : sCacheUrl,setName:'pb',scoreProperty: 'cs' });
+const cacheDB      = new Cache({ sCacheUrl : sCacheUrl, setName: 'tr', scoreProperty: 'trendingScore' });
 
 const cityCode     = 'nyc';
 
@@ -24,7 +24,7 @@ const NBucketThreshold = 5000;
 const halfWinLonScale = 0.001;
 const halfWinLatScale = 0.001;
 
-const pb = new Pinball({
+const tr = new Trending({
   cityCode          : cityCode,
   lowerLatitude     : lowerLeft[1],
   upperLatitude     : lowerLeft[1] + deltaLat,
@@ -36,12 +36,14 @@ const pb = new Pinball({
 });
 
 const t1 = Date.now();
-pb.loadFromCache({ sCacheUrl: sCacheUrl })
+tr.loadFromCache({ sCacheUrl: sCacheUrl,setName: 'tr' })
 .then( () => {
-  console.log({ action: 'pb.loadFromCache.complete', time: Date.now() - t1})
+  console.log({ action: 'tr.loadFromCache.complete', time: Date.now() - t1})
   process.exit(0);
 })
 .catch( err => {
-  console.error({ action: 'pb.loadFromCache.err', err:err });
+  console.error({ action: 'tr.loadFromCache.err', err:err });
   process.exit(1);
 })
+
+

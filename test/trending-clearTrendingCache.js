@@ -4,7 +4,7 @@ const Cache        = cache.Cache;
 const getCacheId   = cache.getCacheId;
 const sCacheUrl    = 'redis://localhost:6379';
 
-const cacheDB      = new Cache({ sCacheUrl : sCacheUrl,setName:'pb',scoreProperty: 'cs' });
+const cacheDB      = new Cache({ sCacheUrl : sCacheUrl, setName: 'tr', scoreProperty: 'trendingScore' });
 
 const cityCode     = 'nyc';
 // const cityCode     = 'la';
@@ -25,7 +25,7 @@ for (let i=0;i < NItems;i++) {
 }
 
 const t0 = Date.now();
-cacheDB.keys({ pattern: `pb:*`})
+cacheDB.keys({ pattern: `tr:*`})
 .then( aKeys => {
   console.log('keys before',aKeys);
   return cacheDB.batchRemoveFromCache({ aCacheIds: aKeys, cityCode: cityCode })
@@ -49,3 +49,4 @@ cacheDB.keys({ pattern: `pb:*`})
   console.error({ action: 'clearCache.Promise.all.aRemovePromises.err', err: err });
   throw err;
 })
+

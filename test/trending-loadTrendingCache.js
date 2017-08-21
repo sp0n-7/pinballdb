@@ -2,7 +2,7 @@
 const cache        = require('../lib/cache');
 const Cache        = cache.Cache;
 const sCacheUrl    = 'redis://localhost:6379';
-const cacheDB      = new Cache({ sCacheUrl : sCacheUrl,setName:'pb',scoreProperty: 'cs' });
+const cacheDB      = new Cache({ sCacheUrl : sCacheUrl, setName: 'tr', scoreProperty: 'trendingScore' });
 
 const cityCode     = 'nyc';
 
@@ -164,7 +164,10 @@ for (let i=0;i < NItems;i++) {
     longitude   : ll[1],
     ll          : ll,
     key         : id,
-    level       : level
+    level       : level,
+    trendingScore: cs
+
+
   });
 
   // async cache, so all pinballs are updated
@@ -173,11 +176,11 @@ for (let i=0;i < NItems;i++) {
   aItems.push(oItem);
 }
 
-cacheDB.batchUpsertCache({ aDocArray: aItems, cityCode: cityCode,bAddZSet:true }).then( () => {
+cacheDB.batchUpsertCache({ aDocArray: aItems, cityCode: cityCode}).then( () => {
   t1 = Date.now();
   console.log('load cache time',t1-t0);
-  const scanPattern = `pb:${cityCode}:*`; // used for keys
-  const setKey      = cache.getSortedSetName(cityCode);
+  const scanPattern = `tr:${cityCode}:*`; // used for keys
+  const setKey      = 'tr:nyc:sortedSet'//cache.getSortedSetName(cityCode);
   console.log('setKey',setKey);
   // return cacheDB.keys({ setKey: setKey, pattern: scanPattern }); // unordered but pages
   return cacheDB.orderedKeys({ setKey: setKey });
@@ -196,3 +199,4 @@ cacheDB.batchUpsertCache({ aDocArray: aItems, cityCode: cityCode,bAddZSet:true }
   console.error({ action: 'loadCache.Promise.all.aUpsertPromises.err', err: err });
   throw err;
 })
+

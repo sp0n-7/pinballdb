@@ -1,10 +1,10 @@
 // for loading event data into cache
-const Pinball      = require('../lib/pinball');
+const Trending     = require('../index').Trending
 const cache        = require('../lib/cache');
 const Cache        = cache.Cache;
+const cacheBase    = cache.CacheBase
 const sCacheUrl    = 'redis://localhost:6379';
-const cacheDB      = new Cache({ sCacheUrl : sCacheUrl,setName:'pb',scoreProperty: 'cs' });
-
+const cacheDB      = new Cache({ sCacheUrl : sCacheUrl, setName: 'tr', scoreProperty: 'trendingScore' });
 const cityCode     = 'nyc';
 
 // ny like grid
@@ -20,11 +20,10 @@ const deltaLat   = upperRight[1] - lowerLeft[1];
 // if the most likely query is large, smaller bucket dims work faster, due to quicker intermediate grid sums
 const NLat = 40;
 const NLon = 40;
-const NBucketThreshold = 5000;
 const halfWinLonScale = 0.001;
 const halfWinLatScale = 0.001;
 
-const pb = new Pinball({
+const tr = new Trending({
   cityCode          : cityCode,
   lowerLatitude     : lowerLeft[1],
   upperLatitude     : lowerLeft[1] + deltaLat,
@@ -32,16 +31,17 @@ const pb = new Pinball({
   upperLongitude    : lowerLeft[0] + deltaLon,
   NLatitude         : NLat,
   NLongitude        : NLon,
-  NBucketThreshold  : NBucketThreshold
 });
 
 const t1 = Date.now();
-pb.loadFromCache({ sCacheUrl: sCacheUrl })
+tr.loadFromCache({ sCacheUrl: sCacheUrl, setName: 'tr' })
 .then( () => {
-  console.log({ action: 'pb.loadFromCache.complete', time: Date.now() - t1})
+  console.log({ action: 'tr.loadFromCache.complete', time: Date.now() - t1})
   process.exit(0);
 })
 .catch( err => {
-  console.error({ action: 'pb.loadFromCache.err', err:err });
+  console.error({ action: 'tr.loadFromCache.err', err:err });
   process.exit(1);
 })
+
+

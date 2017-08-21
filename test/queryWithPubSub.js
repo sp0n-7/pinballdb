@@ -1,10 +1,11 @@
-const Pinball      = require('../lib/pinball');
+//const Pinball      = require('../lib/pinball');
 
+const Pinball      = require('../lib/trending');
 // for loading event data into cache
 const cache        = require('../lib/cache');
 const Cache        = cache.Cache;
 const sCacheUrl    = 'redis://localhost:6379';
-const cacheDB      = new Cache({ sCacheUrl : sCacheUrl });
+const cacheDB      = new Cache({ sCacheUrl : sCacheUrl,setName:'pb',scoreProperty: 'cs' });
 
 const cityCode     = 'nyc';
 
@@ -250,7 +251,7 @@ pb.addSubscriber({ sCacheUrl: sCacheUrl })
 
       let t4 = Date.now();
 
-      cacheDB.batchRemoveFromCache(aCacheIds).then( () => {
+      cacheDB.batchRemoveFromCache({aCacheIds:aCacheIds,cityCode:cityCode}).then( () => {
         console.log('clear cache time',Date.now()-t4);
 
         // now all events have been removed from cache

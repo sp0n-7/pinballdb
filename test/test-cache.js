@@ -11,8 +11,7 @@ const getTime = (tClock) => {
 }
 
 const sCacheUrl = 'redis://localhost:6379';
-const pub       = new Cache({ sCacheUrl: sCacheUrl });
-
+const pub      = new Cache({ sCacheUrl : sCacheUrl,setName:'pb',scoreProperty: 'cs' });
 const cityCode  = 'nyc';
 let   oProcs    = {};
 
@@ -28,9 +27,10 @@ oProcs[`pb:${cityCode}:remove`] = (cacheId) => {
 
 const oSubscriberOptions = {
   sCacheUrl : sCacheUrl,
-  oProcs    : oProcs
+  oProcs    : oProcs,
+  setName   : 'pb',
+  scoreProperty: 'cs'
 }
-
 // ny like grid
 const lowerLeft  = [-74.262771, 40.477247];
 const upperRight = [-73.713455, 40.930374];
