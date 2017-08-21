@@ -4,7 +4,8 @@ const Pinball      = require('../lib/pinball');
 const cache        = require('../lib/cache');
 const Cache        = cache.Cache;
 const sCacheUrl    = 'redis://localhost:6379';
-const cacheDB      = new Cache({ sCacheUrl : sCacheUrl,setName:'pb',scoreProperty: 'cs' });
+//const cacheDB      = new Cache({ sCacheUrl : sCacheUrl,setName:'pb',scoreProperty: 'cs' });
+const cacheDB      = new Cache({ sCacheUrl : sCacheUrl});
 
 const cityCode     = 'nyc';
 
