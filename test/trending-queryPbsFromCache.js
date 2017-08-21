@@ -106,7 +106,7 @@ tr.addSubscriber({ sCacheUrl: sCacheUrl })
   }
 
     console.log('delay done');
-  },10000)
+  },5000)
 
 
 })

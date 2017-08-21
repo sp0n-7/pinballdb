@@ -2,7 +2,7 @@
 const cache        = require('../lib/cache');
 const Cache        = cache.Cache;
 const sCacheUrl    = 'redis://localhost:6379';
-const cacheDB      = new Cache({ sCacheUrl : sCacheUrl,setName:'tr' });
+const cacheDB      = new Cache({ sCacheUrl : sCacheUrl, setName: 'tr', scoreProperty: 'trendingScore' });
 
 const getTime = (tClock) => {
   const dT = process.hrtime(tClock);
@@ -178,7 +178,8 @@ for (let cityCode in cityCodes) {
       longitude   : ll[1],
       ll          : ll,
       key         : id,
-      level       : level
+      level       : level,
+      trendingScore: cs
     });
 
     // async cache, so all pinballs are updated

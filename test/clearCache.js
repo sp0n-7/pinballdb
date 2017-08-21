@@ -4,7 +4,7 @@ const Cache        = cache.Cache;
 const getCacheId   = cache.getCacheId;
 const sCacheUrl    = 'redis://localhost:6379';
 
-const cacheDB      = new Cache({ sCacheUrl : sCacheUrl });
+const cacheDB      = new Cache({ sCacheUrl : sCacheUrl,setName:'pb',scoreProperty: 'cs' });
 
 const cityCode     = 'nyc';
 // const cityCode     = 'la';
