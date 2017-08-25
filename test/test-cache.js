@@ -248,13 +248,12 @@ subscribeToCache(oSubscriberOptions).then( sub => {
 
   const delayAfterDone = 500;
 
-  const setKey = pub.getSortedSetName(cityCode);
   Promise.all(aPromises)
   .then( () => {
-    return pub.batchGetFromCacheByScore({ setKey: setKey, scoreStart: midTime });
+    return pub.batchGetFromCacheByScore({ cityCode: cityCode, scoreStart: midTime });
   })
   .then( aData => {
-    console.log('aData',aData);
+    console.log('ids',aData.map( o => o.id ),'aData',aData);
     return pub.keys({ pattern: `pb:*`});
   })
   .then( aCacheIds => {
@@ -265,7 +264,7 @@ subscribeToCache(oSubscriberOptions).then( sub => {
     return pub.keys({ pattern: `pb:*`});
   })
   .then( aCacheIds => {
-    console.log('keys after removal',aCacheIds);
+    // console.log('keys after removal',aCacheIds);
     console.log({ action: 'test complete', tUpAvg: tUpSum/N, tGetAvg: tGetSum/N, tDelAvg: tDelSum/N, tAllAvg: tAllSum/N, tTotal: getTime(start)});
     process.exit(0);
   })
