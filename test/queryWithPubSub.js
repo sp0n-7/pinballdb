@@ -193,7 +193,7 @@ pb.addSubscriber({ sCacheUrl: sCacheUrl })
     });
 
     aItems.push(oItem);
-    aCacheIds.push(cache.getCacheId({ id: id }));
+    aCacheIds.push(pb.cacheSubscriber.getCacheId({ id: id }));
   }
 
   // Promise.all(aUpsertPromises).then( () => {
