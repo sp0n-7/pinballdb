@@ -1,6 +1,6 @@
-//const Pinball      = require('../lib/pinball');
+const Pinball      = require('../lib/pinball');
 
-const Pinball      = require('../lib/trending');
+// const Pinball      = require('../lib/trending');
 // for loading event data into cache
 const cache        = require('../lib/cache');
 const Cache        = cache.Cache;
@@ -32,7 +32,7 @@ const halfWinLonScale = 0.001;
 const halfWinLatScale = 0.001;
 
 const NItems    = 100000;
-const NQueries  = 10000;
+const NQueries  = 500000;
 
 const pb = new Pinball({
   cityCode          : cityCode,
