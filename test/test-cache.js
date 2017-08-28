@@ -174,6 +174,8 @@ subscribeToCache(oSubscriberOptions).then( sub => {
   let aPromises = [];
 
   const t0 = Date.now();
+
+  let midTime = null
   
   for (let i = 0; i < N;i++) {
     // const a = { id: 'a'+i, yoo: 'hoo', isGood: false, and: 100, isGreaterThan: 99.9 };
@@ -183,6 +185,9 @@ subscribeToCache(oSubscriberOptions).then( sub => {
     const oItemBase = Object.assign({}, oIncidentBase);
     const cs = t0 - 10 * 60 * 1000 + i;
     const ts = cs + Math.floor(Math.random() * 60000);
+    if (i === N/2) {
+      midTime = cs
+    }
     const level = Math.floor(Math.random() * 4);
     const oItem = Object.assign(oItemBase, {
       id          : id,
@@ -245,6 +250,10 @@ subscribeToCache(oSubscriberOptions).then( sub => {
 
   Promise.all(aPromises)
   .then( () => {
+    return pub.batchGetFromCacheByScore({ cityCode: cityCode, scoreStart: midTime });
+  })
+  .then( aData => {
+    console.log('ids',aData.map( o => o.id ),'aData',aData);
     return pub.keys({ pattern: `pb:*`});
   })
   .then( aCacheIds => {
@@ -255,7 +264,7 @@ subscribeToCache(oSubscriberOptions).then( sub => {
     return pub.keys({ pattern: `pb:*`});
   })
   .then( aCacheIds => {
-    console.log('keys after removal',aCacheIds);
+    // console.log('keys after removal',aCacheIds);
     console.log({ action: 'test complete', tUpAvg: tUpSum/N, tGetAvg: tGetSum/N, tDelAvg: tDelSum/N, tAllAvg: tAllSum/N, tTotal: getTime(start)});
     process.exit(0);
   })
