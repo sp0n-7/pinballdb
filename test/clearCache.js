@@ -1,7 +1,6 @@
 // for loading event data into cache
 const cache        = require('../lib/cache');
 const Cache        = cache.Cache;
-const getCacheId   = cache.getCacheId;
 const sCacheUrl    = 'redis://localhost:6379';
 
 const cacheDB      = new Cache({ sCacheUrl : sCacheUrl,setName:'pb',scoreProperty: 'cs' });

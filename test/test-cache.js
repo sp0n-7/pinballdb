@@ -2,7 +2,6 @@ const cache             = require('../lib/cache');
 const subscribeToCache  = cache.subscribeToCache;
 const Cache             = cache.Cache;
 const getDocId          = cache.getDocId;
-const getCacheId        = cache.getCacheId;
 
 
 const getTime = (tClock) => {
@@ -205,7 +204,7 @@ subscribeToCache(oSubscriberOptions).then( sub => {
     let go = () => {
       let t1 = process.hrtime();
       let t2,t3;
-      const cacheId = getCacheId({ id: oItem.id });
+      const cacheId = sub.getCacheId({ id: oItem.id });
       return new Promise( (resolve,reject) => {
         pub.upsert(oItem)
         .catch( err => {
