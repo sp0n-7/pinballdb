@@ -1,5 +1,9 @@
 const cache             = require('../lib/cache');
 const subscribeToCache  = cache.subscribeToCache;
+
+console.log('cache',cache)
+console.log('subscribeToCache',subscribeToCache)
+
 const Cache             = cache.Cache;
 const getDocId          = cache.getDocId;
 
