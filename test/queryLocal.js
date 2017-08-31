@@ -23,7 +23,7 @@ const halfWinLonScale = 0.02;
 const halfWinLatScale = 0.02;
 
 const NItems    = 100000;
-const NQueries  = 10000;
+const NQueries  = 10;
 
 const pb = new Pinball({
   cityCode          : 'nyc',
@@ -169,7 +169,7 @@ for (let i=0;i < NItems;i++) {
   const ll = [lowerLeft[1] + Math.random() * deltaLat,lowerLeft[0] + Math.random() * deltaLon];
   const oItemBase = Object.assign({}, oIncidentBase);
   const cs = t0 - 10 * 60 * 1000 + i;
-  const ts = cs + Math.floor(Math.random() * 60000);
+  const ts = cs + Math.floor(Math.random() * 180000);
   const level = Math.floor(Math.random() * 4);
   const oItem = Object.assign(oItemBase, {
     id          : id,
@@ -229,7 +229,7 @@ console.log({ queriesTimeMS: t3-t2, queriesPerSecond: NQueries / ( (t3-t2)/1000 
 // for (let ind=0;ind < aResults.length;ind++) {
 for (let ind=aResults.length - 10;ind < aResults.length;ind++) {
   // let ind = aResults.length - 1;
-  console.log('iQuery',ind);
+  console.log('iQuery',ind,'NTotal',aResults[ind].length);
   for (let j=0;j < aResults[ind].length;j++) {
     console.log(aResults[ind][j].id,aResults[ind][j].ts,aResults[ind][j].latitude,aResults[ind][j].longitude)
   }    
