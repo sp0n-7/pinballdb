@@ -19,11 +19,11 @@ const deltaLat   = upperRight[1] - lowerLeft[1];
 const NLat = 40;
 const NLon = 40;
 const NBucketThreshold = 5000;
-const halfWinLonScale = 0.02;
-const halfWinLatScale = 0.02;
+const halfWinLonScale = 0.04;
+const halfWinLatScale = 0.04;
 
 const NItems    = 100000;
-const NQueries  = 10000;
+const NQueries  = 100000;
 
 const pb = new Pinball({
   cityCode          : 'nyc',
@@ -168,8 +168,8 @@ for (let i=0;i < NItems;i++) {
   const id = '-k' + i;
   const ll = [lowerLeft[1] + Math.random() * deltaLat,lowerLeft[0] + Math.random() * deltaLon];
   const oItemBase = Object.assign({}, oIncidentBase);
-  const cs = t0 - 10 * 60 * 1000 + i;
-  const ts = cs + Math.floor(Math.random() * 60000);
+  const cs = t0 - Math.floor(25 * 60 * 1000) + i;
+  const ts = cs + Math.floor(Math.random() * 1000);
   const level = Math.floor(Math.random() * 4);
   const oItem = Object.assign(oItemBase, {
     id          : id,
@@ -224,17 +224,18 @@ for (let i=0;i < NQueries;i++) {
 
 
 let t3 = Date.now();
-setTimeout( () => {
+// setTimeout( () => {
 console.log({ queriesTimeMS: t3-t2, queriesPerSecond: NQueries / ( (t3-t2)/1000 ) })
 // for (let ind=0;ind < aResults.length;ind++) {
-for (let ind=aResults.length - 10;ind < aResults.length;ind++) {
+const iStart = aResults.length > 10 ? aResults.length - 10 : 0
+for (let ind=iStart;ind < aResults.length;ind++) {
   // let ind = aResults.length - 1;
-  console.log('iQuery',ind);
-  for (let j=0;j < aResults[ind].length;j++) {
-    console.log(aResults[ind][j].id,aResults[ind][j].ts,aResults[ind][j].latitude,aResults[ind][j].longitude)
-  }    
+  console.log('iQuery',ind,'NTotal',aResults[ind].length);
+  // for (let j=0;j < aResults[ind].length;j++) {
+  //   console.log(aResults[ind][j].id,aResults[ind][j].ts,aResults[ind][j].latitude,aResults[ind][j].longitude)
+  // }    
 }
 
-  console.log('delay done');
-},10000)
+  // console.log('delay done');
+// },)
 
